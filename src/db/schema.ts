@@ -15,37 +15,69 @@ import {
 } from "drizzle-orm/pg-core";
 
 /**
- * ---------- USERS (tabela principal de autenticação) ----------
- * Guarda todos os usuários do sistema (atletas e doadores).
+ * ---------- BETTER AUTH USER ----------
  */
-export const users = pgTable("users", {
+export const user = pgTable("user", {
   id: uuid("id").defaultRandom().primaryKey(),
+  name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  passwordHash: text("password_hash"), // nulo se OAuth
-  isActive: boolean("is_active").default(true).notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-  lastLogin: timestamp("last_login", { withTimezone: true }),
+  emailVerified: boolean("email_verified").notNull(),
+  image: text("image"),
+  password: text("password"), // hash da senha
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
 });
 
 /**
- * ---------- PROFILES ----------
- * Informações públicas / apresentáveis do usuário.
- * 1:1 com users (userId é PK).
+ * ---------- SESSIONS (Better Auth) ----------
  */
-export const profiles = pgTable("profiles", {
+export const session = pgTable("session", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  expiresAt: timestamp("expires_at").notNull(),
+  token: text("token").notNull().unique(),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
   userId: uuid("user_id")
-    .primaryKey()
-    .references(() => users.id, { onDelete: "cascade" }),
-  displayName: text("display_name"),
-  avatarUrl: text("avatar_url"),
-  bio: text("bio"),
-  phone: text("phone"),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+});
+
+/**
+ * ---------- ACCOUNTS (Better Auth) ----------
+ */
+export const account = pgTable("account", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  accountId: text("account_id").notNull(),
+  providerId: text("provider_id").notNull(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  accessToken: text("access_token"),
+  refreshToken: text("refresh_token"),
+  idToken: text("id_token"),
+  accessTokenExpiresAt: timestamp("access_token_expires_at"),
+  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+  scope: text("scope"),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+});
+
+/**
+ * ---------- VERIFICATIONS (Better Auth) ----------
+ */
+export const verification = pgTable("verification", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  identifier: text("identifier").notNull(),
+  value: text("value").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at"),
+  updatedAt: timestamp("updated_at"),
 });
 
 /**
  * ---------- ROLES ----------
- * Lista de roles do sistema (athlete, donor, admin).
  */
 export const roles = pgTable("roles", {
   id: serial("id").primaryKey(),
@@ -54,13 +86,11 @@ export const roles = pgTable("roles", {
 
 /**
  * ---------- USER_ROLES ----------
- * Associação N:N entre users e roles.
- * PK composta (userId, roleId).
  */
 export const userRoles = pgTable(
   "user_roles",
   {
-    userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
+    userId: uuid("user_id").references(() => user.id, { onDelete: "cascade" }),
     roleId: serial("role_id").references(() => roles.id, {
       onDelete: "cascade",
     }),
@@ -73,15 +103,27 @@ export const userRoles = pgTable(
 );
 
 /**
+ * ---------- PROFILES ----------
+ */
+export const profiles = pgTable("profiles", {
+  userId: uuid("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  displayName: text("display_name"),
+  avatarUrl: text("avatar_url"),
+  bio: text("bio"),
+  phone: text("phone"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+/**
  * ---------- ATHLETES ----------
- * Perfil específico de atleta. Cada atleta está ligado a um user.
- * (userId é UNIQUE para garantir 1 atleta por user)
  */
 export const athletes = pgTable("athletes", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("user_id")
     .unique()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => user.id, { onDelete: "cascade" }),
   faixa: text("faixa"),
   escola: text("escola"),
   nascimento: date("nascimento"),
@@ -92,7 +134,6 @@ export const athletes = pgTable("athletes", {
 
 /**
  * ---------- COMPETITIONS ----------
- * Competição vinculada a atleta.
  */
 export const competitions = pgTable("competitions", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -109,8 +150,6 @@ export const competitions = pgTable("competitions", {
 
 /**
  * ---------- CAMPAIGNS ----------
- * Campanhas de arrecadação criadas por atletas.
- * collectedAmount é cache (pode ser mantido por triggers/workers).
  */
 export const campaigns = pgTable(
   "campaigns",
@@ -141,7 +180,6 @@ export const campaigns = pgTable(
 
 /**
  * ---------- CAMPAIGN_ITEMS ----------
- * Itens/ recompensas / rifas / produtos dentro de uma campanha.
  */
 export const campaignItems = pgTable("campaign_items", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -152,19 +190,17 @@ export const campaignItems = pgTable("campaign_items", {
   description: text("description"),
   quantity: integer("quantity").default(1),
   price: numeric("price", { precision: 12, scale: 2 }).default("0"),
-  type: text("type").default("donation"), // donation | raffle | product
+  type: text("type").default("donation"),
 });
 
 /**
  * ---------- DONATIONS ----------
- * Cada doação é **para um único atleta** (pode também apontar para campanha).
- * status: pending | succeeded | failed | refunded
  */
 export const donations = pgTable(
   "donations",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    donorUserId: uuid("donor_user_id").references(() => users.id, {
+    donorUserId: uuid("donor_user_id").references(() => user.id, {
       onDelete: "set null",
     }),
     campaignId: uuid("campaign_id").references(() => campaigns.id, {
@@ -176,7 +212,7 @@ export const donations = pgTable(
     amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
     currency: varchar("currency", { length: 3 }).default("BRL"),
     status: text("status").default("pending").notNull(),
-    paymentProvider: text("payment_provider"), // stripe | pix | ...
+    paymentProvider: text("payment_provider"),
     paymentProviderId: text("payment_provider_id"),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
     confirmedAt: timestamp("confirmed_at", { withTimezone: true }),
@@ -190,7 +226,6 @@ export const donations = pgTable(
 
 /**
  * ---------- TRANSACTIONS ----------
- * Registro financeiro detalhado por provedor (fees, net).
  */
 export const transactions = pgTable("transactions", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -207,12 +242,7 @@ export const transactions = pgTable("transactions", {
 });
 
 /**
- * ---------- ATHLETE_DONORS (pivot M:N) ----------
- * Relação explícita atleta <-> doador, para consultas/agg rápidas.
- * PK composta (athleteId, donorUserId).
- * É atualizada quando uma doação (succeeded) ocorre:
- *  - se não existir, cria com firstDonationId
- *  - atualiza totalAmount, donationsCount, lastDonatedAt
+ * ---------- ATHLETE_DONORS ----------
  */
 export const athleteDonors = pgTable(
   "athlete_donors",
@@ -220,7 +250,7 @@ export const athleteDonors = pgTable(
     athleteId: uuid("athlete_id").references(() => athletes.id, {
       onDelete: "cascade",
     }),
-    donorUserId: uuid("donor_user_id").references(() => users.id, {
+    donorUserId: uuid("donor_user_id").references(() => user.id, {
       onDelete: "cascade",
     }),
     firstDonationId: uuid("first_donation_id").references(() => donations.id, {
@@ -241,28 +271,26 @@ export const athleteDonors = pgTable(
 
 /**
  * ---------- MEDIA ----------
- * Imagens / vídeos de campanhas e avatares (armazenar URL).
  */
 export const media = pgTable("media", {
   id: uuid("id").defaultRandom().primaryKey(),
-  ownerUserId: uuid("owner_user_id").references(() => users.id, {
+  ownerUserId: uuid("owner_user_id").references(() => user.id, {
     onDelete: "set null",
   }),
   campaignId: uuid("campaign_id").references(() => campaigns.id, {
     onDelete: "cascade",
   }),
   url: text("url").notNull(),
-  type: text("type"), // image, video
+  type: text("type"),
   alt: text("alt"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
 /**
- * ---------- METRICS (global) ----------
- * Mantém 1 registro global para dashboard rápido.
+ * ---------- METRICS ----------
  */
 export const metrics = pgTable("metrics", {
-  id: serial("id").primaryKey(), // manter 1 registro (id = 1)
+  id: serial("id").primaryKey(),
   totalCollectedCents: integer("total_collected_cents").default(0).notNull(),
   totalAthletesSupported: integer("total_athletes_supported")
     .default(0)
@@ -275,7 +303,6 @@ export const metrics = pgTable("metrics", {
 
 /**
  * ---------- ATHLETE_METRICS ----------
- * Métricas por atleta (uma linha por atleta).
  */
 export const athleteMetrics = pgTable("athlete_metrics", {
   athleteId: uuid("athlete_id")
@@ -290,7 +317,6 @@ export const athleteMetrics = pgTable("athlete_metrics", {
 
 /**
  * ---------- CAMPAIGN_METRICS ----------
- * Métricas por campanha (uma linha por campanha).
  */
 export const campaignMetrics = pgTable("campaign_metrics", {
   campaignId: uuid("campaign_id")
