@@ -26,7 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { login, authClient } from "@/lib/auth/actions";
+import { authClient } from "@/lib/auth-client";
 
 const loginSchema = z.object({
   email: z
@@ -39,6 +39,18 @@ const loginSchema = z.object({
     .trim()
     .min(8, "A senha deve ter pelo menos 8 caracteres"),
 });
+
+// Tipagem do usuário com role
+interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  image?: string | null;
+  role: "admin" | "athlete" | "supporter" | null;
+}
 
 const LoginForm = () => {
   const router = useRouter();
@@ -57,31 +69,46 @@ const LoginForm = () => {
     setIsLoading(true);
     setErrors({});
 
-    const result = await login(values);
+    try {
+      const { data, error } = await authClient.signIn.email({
+        email: values.email,
+        password: values.password,
+      });
 
-    if (result?.errors) {
-      setErrors(result.errors);
-      toast.error("Erro ao entrar. Confira seus dados.");
-    } else {
-      toast.success("Login realizado com sucesso!");
-      // redirecionamento baseado na role
-      if (result?.userRole === "admin") {
-        router.push("/dashboard/admin");
-      } else if (result?.userRole === "athlete") {
-        router.push("/dashboard/athlete");
-      } else {
-        router.push("/dashboard");
+      if (error) {
+        toast.error(error.message || "Erro ao entrar. Confira seus dados.");
+        setIsLoading(false);
+        return;
       }
-    }
 
-    setIsLoading(false);
+      const user = data?.user as AuthUser | undefined;
+
+      if (!user) {
+        toast.error("Erro ao obter dados do usuário.");
+        setIsLoading(false);
+        return;
+      }
+
+      toast.success("Login realizado com sucesso!");
+
+      // redirecionamento baseado na role
+      if (user.role === "admin") router.push("/dashboard/admin");
+      else if (user.role === "athlete") router.push("/dash-athletes");
+      else if (user.role === "supporter") router.push("/dash-donors");
+      else router.push("/select-role"); // se não tiver role definida
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro inesperado ao entrar.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleLogin = async () => {
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/select-role", // usuário sem role vai escolher aqui
+        callbackURL: "/select-role",
         scopes: ["email", "profile"],
       });
     } catch (error) {
@@ -155,6 +182,7 @@ const LoginForm = () => {
               className="mt-2 flex w-full items-center justify-center"
               onClick={handleGoogleLogin}
             >
+              {/* ícone Google */}
               <svg viewBox="0 0 24 24" className="mr-2 h-4 w-4">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -182,7 +210,7 @@ const LoginForm = () => {
           <p className="text-muted-foreground text-sm">
             Não tem uma conta?{" "}
             <Link href="/register" className="text-primary hover:underline">
-              Cadastre-se
+              Criar conta
             </Link>
           </p>
         </div>
