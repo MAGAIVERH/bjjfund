@@ -10,15 +10,17 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
+import { RadioGroupItem } from "@/components/ui/radio-group";
+import { FormLabel } from "@/components/ui/form";
 import { toast } from "sonner";
 
-import { authClient } from "@/lib/auth-client"; // ou API que você usa
-import { setRole } from "@/lib/auth/actions"; // função backend que salva role
-import { FormLabel } from "@/components/ui/form";
+import { setRole } from "@/app/actions/auth";
 
-const SelectRolePage = async () => {
+interface SelectRolePageProps {
+  currentUserId: string; // ID do usuário logado
+}
+
+const SelectRolePage = ({ currentUserId }: SelectRolePageProps) => {
   const router = useRouter();
   const [role, setRoleState] = useState<"athlete" | "supporter">("supporter");
   const [isLoading, setIsLoading] = useState(false);
@@ -26,20 +28,19 @@ const SelectRolePage = async () => {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const currentUserId = await authClient.getCurrentUserId(); // precisa implementar
-      await setRole(currentUserId, role); // salva role no banco
+      await setRole(currentUserId, role);
+
       toast.success("Role definida com sucesso!");
 
-      if (role === "athlete") {
-        router.push("/dashboard/athlete");
-      } else {
-        router.push("/dashboard");
-      }
+      router.push(
+        role === "athlete" ? "/dashboard/athlete" : "/dashboard/donor",
+      );
     } catch (error) {
-      toast.error("Erro ao salvar a role. Tente novamente.");
       console.error(error);
+      toast.error("Erro ao salvar a role. Tente novamente.");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
