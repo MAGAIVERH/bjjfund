@@ -1,21 +1,8 @@
-// import { getSession } from "@/lib/auth/session";
-import { redirect } from "next/navigation";
 import LoginForm from "./components/login-form";
+import RegisterForm from "./components/register-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const AuthenticationPage = async () => {
-  // const session = await getSession();
-
-  // if (session) {
-  //   if (session.user.role === "athlete") {
-  //     redirect("/dashboard/athlete");
-  //   } else if (session.user.role === "admin") {
-  //     redirect("/dashboard/admin");
-  //   } else {
-  //     redirect("/dashboard"); // donor
-  //   }
-  // }
-
+const AuthenticationPage = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <Tabs defaultValue="login" className="w-[400px]">
@@ -26,7 +13,9 @@ const AuthenticationPage = async () => {
         <TabsContent value="login">
           <LoginForm />
         </TabsContent>
-        <TabsContent value="register">{/* <SignUpForm /> */}</TabsContent>
+        <TabsContent value="register">
+          <RegisterForm />
+        </TabsContent>
       </Tabs>
     </div>
   );
