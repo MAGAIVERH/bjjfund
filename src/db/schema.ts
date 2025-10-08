@@ -1,8 +1,7 @@
 import {
   pgTable,
-  uuid,
-  serial,
   text,
+  serial,
   varchar,
   numeric,
   boolean,
@@ -18,12 +17,12 @@ import {
  * ---------- BETTER AUTH USER ----------
  */
 export const user = pgTable("user", {
-  id: uuid("id").defaultRandom().primaryKey(),
+  id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull(),
   image: text("image"),
-  password: text("password"), // hash da senha
+  role: text("role").default("supporter").notNull(),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
 });
@@ -32,14 +31,14 @@ export const user = pgTable("user", {
  * ---------- SESSIONS (Better Auth) ----------
  */
 export const session = pgTable("session", {
-  id: uuid("id").defaultRandom().primaryKey(),
+  id: text("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
   token: text("token").notNull().unique(),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
@@ -48,14 +47,15 @@ export const session = pgTable("session", {
  * ---------- ACCOUNTS (Better Auth) ----------
  */
 export const account = pgTable("account", {
-  id: uuid("id").defaultRandom().primaryKey(),
+  id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   accessToken: text("access_token"),
   refreshToken: text("refresh_token"),
+  password: text("password"),
   idToken: text("id_token"),
   accessTokenExpiresAt: timestamp("access_token_expires_at"),
   refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
@@ -68,7 +68,7 @@ export const account = pgTable("account", {
  * ---------- VERIFICATIONS (Better Auth) ----------
  */
 export const verification = pgTable("verification", {
-  id: uuid("id").defaultRandom().primaryKey(),
+  id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
@@ -90,7 +90,7 @@ export const roles = pgTable("roles", {
 export const userRoles = pgTable(
   "user_roles",
   {
-    userId: uuid("user_id").references(() => user.id, { onDelete: "cascade" }),
+    userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
     roleId: serial("role_id").references(() => roles.id, {
       onDelete: "cascade",
     }),
@@ -106,7 +106,7 @@ export const userRoles = pgTable(
  * ---------- PROFILES ----------
  */
 export const profiles = pgTable("profiles", {
-  userId: uuid("user_id")
+  userId: text("user_id")
     .primaryKey()
     .references(() => user.id, { onDelete: "cascade" }),
   displayName: text("display_name"),
@@ -120,8 +120,8 @@ export const profiles = pgTable("profiles", {
  * ---------- ATHLETES ----------
  */
 export const athletes = pgTable("athletes", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  userId: uuid("user_id")
+  id: text("id").primaryKey(),
+  userId: text("user_id")
     .unique()
     .references(() => user.id, { onDelete: "cascade" }),
   faixa: text("faixa"),
@@ -136,8 +136,8 @@ export const athletes = pgTable("athletes", {
  * ---------- COMPETITIONS ----------
  */
 export const competitions = pgTable("competitions", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  athleteId: uuid("athlete_id").references(() => athletes.id, {
+  id: text("id").primaryKey(),
+  athleteId: text("athlete_id").references(() => athletes.id, {
     onDelete: "cascade",
   }),
   name: text("name").notNull(),
@@ -154,8 +154,8 @@ export const competitions = pgTable("competitions", {
 export const campaigns = pgTable(
   "campaigns",
   {
-    id: uuid("id").defaultRandom().primaryKey(),
-    athleteId: uuid("athlete_id").references(() => athletes.id, {
+    id: text("id").primaryKey(),
+    athleteId: text("athlete_id").references(() => athletes.id, {
       onDelete: "cascade",
     }),
     title: text("title").notNull(),
@@ -182,8 +182,8 @@ export const campaigns = pgTable(
  * ---------- CAMPAIGN_ITEMS ----------
  */
 export const campaignItems = pgTable("campaign_items", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  campaignId: uuid("campaign_id").references(() => campaigns.id, {
+  id: text("id").primaryKey(),
+  campaignId: text("campaign_id").references(() => campaigns.id, {
     onDelete: "cascade",
   }),
   name: text("name"),
@@ -199,14 +199,14 @@ export const campaignItems = pgTable("campaign_items", {
 export const donations = pgTable(
   "donations",
   {
-    id: uuid("id").defaultRandom().primaryKey(),
-    donorUserId: uuid("donor_user_id").references(() => user.id, {
+    id: text("id").primaryKey(),
+    donorUserId: text("donor_user_id").references(() => user.id, {
       onDelete: "set null",
     }),
-    campaignId: uuid("campaign_id").references(() => campaigns.id, {
+    campaignId: text("campaign_id").references(() => campaigns.id, {
       onDelete: "set null",
     }),
-    athleteId: uuid("athlete_id").references(() => athletes.id, {
+    athleteId: text("athlete_id").references(() => athletes.id, {
       onDelete: "set null",
     }),
     amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
@@ -228,8 +228,8 @@ export const donations = pgTable(
  * ---------- TRANSACTIONS ----------
  */
 export const transactions = pgTable("transactions", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  donationId: uuid("donation_id").references(() => donations.id, {
+  id: text("id").primaryKey(),
+  donationId: text("donation_id").references(() => donations.id, {
     onDelete: "set null",
   }),
   provider: text("provider"),
@@ -247,13 +247,13 @@ export const transactions = pgTable("transactions", {
 export const athleteDonors = pgTable(
   "athlete_donors",
   {
-    athleteId: uuid("athlete_id").references(() => athletes.id, {
+    athleteId: text("athlete_id").references(() => athletes.id, {
       onDelete: "cascade",
     }),
-    donorUserId: uuid("donor_user_id").references(() => user.id, {
+    donorUserId: text("donor_user_id").references(() => user.id, {
       onDelete: "cascade",
     }),
-    firstDonationId: uuid("first_donation_id").references(() => donations.id, {
+    firstDonationId: text("first_donation_id").references(() => donations.id, {
       onDelete: "set null",
     }),
     totalAmount: numeric("total_amount", { precision: 12, scale: 2 }).default(
@@ -273,11 +273,11 @@ export const athleteDonors = pgTable(
  * ---------- MEDIA ----------
  */
 export const media = pgTable("media", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  ownerUserId: uuid("owner_user_id").references(() => user.id, {
+  id: text("id").primaryKey(),
+  ownerUserId: text("owner_user_id").references(() => user.id, {
     onDelete: "set null",
   }),
-  campaignId: uuid("campaign_id").references(() => campaigns.id, {
+  campaignId: text("campaign_id").references(() => campaigns.id, {
     onDelete: "cascade",
   }),
   url: text("url").notNull(),
@@ -305,7 +305,7 @@ export const metrics = pgTable("metrics", {
  * ---------- ATHLETE_METRICS ----------
  */
 export const athleteMetrics = pgTable("athlete_metrics", {
-  athleteId: uuid("athlete_id")
+  athleteId: text("athlete_id")
     .primaryKey()
     .references(() => athletes.id, { onDelete: "cascade" }),
   totalCollectedCents: integer("total_collected_cents").default(0).notNull(),
@@ -319,7 +319,7 @@ export const athleteMetrics = pgTable("athlete_metrics", {
  * ---------- CAMPAIGN_METRICS ----------
  */
 export const campaignMetrics = pgTable("campaign_metrics", {
-  campaignId: uuid("campaign_id")
+  campaignId: text("campaign_id")
     .primaryKey()
     .references(() => campaigns.id, { onDelete: "cascade" }),
   totalCollectedCents: integer("total_collected_cents").default(0).notNull(),
