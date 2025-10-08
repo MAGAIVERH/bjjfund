@@ -26,7 +26,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { register } from "@/lib/auth/actions";
 import { authClient } from "@/lib/auth-client";
 
 const registerSchema = z.object({
@@ -39,10 +38,11 @@ const registerSchema = z.object({
   password: z
     .string()
     .trim()
-    .min(6, "A senha deve ter pelo menos 6 caracteres"),
-  role: z.string().min(1, "Tipo de conta é obrigatório"), // string simples, não enum
+    .min(8, "A senha deve ter pelo menos 8 caracteres"),
+  role: z.string().min(1, "Tipo de conta é obrigatório"),
 });
-const RegisterForm = async () => {
+
+const RegisterForm = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
@@ -61,23 +61,42 @@ const RegisterForm = async () => {
     setIsLoading(true);
     setErrors({});
 
-    const result = await register(values);
+    const { data, error } = await authClient.signUp.email(
+      {
+        email: values.email,
+        password: values.password,
+        name: values.name,
+        // role: values.role,
+        callbackURL: "/authentication",
+      },
+      {
+        onRequest: () => setIsLoading(true),
+        onSuccess: () => {
+          toast.success("Conta criada com sucesso!");
 
-    if (result?.errors) {
-      setErrors(result.errors);
-      toast.error("Erro ao criar conta. Confira os dados.");
-    } else {
-      toast.success("Conta criada com sucesso!");
-      router.push("/login");
-    }
+          // Redireciona para dashboard dependendo do tipo de usuário
+          if (values.role === "athlete") {
+            router.push("/dash-athletes");
+          } else if (values.role === "supporter") {
+            router.push("/dash-donors");
+          } else {
+            router.push("/authentication"); // fallback
+          }
+        },
+        onError: (ctx) => {
+          toast.error(
+            ctx.error.message || "Erro ao criar conta. Confira os dados.",
+          );
+        },
+      },
+    );
 
     setIsLoading(false);
   };
-
   const handleGoogleRegister = async () => {
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/select-role", // usuário será redirecionado para escolher role
+      callbackURL: "/select-role",
       scopes: ["email", "profile"],
     });
   };
@@ -152,7 +171,11 @@ const RegisterForm = async () => {
                 <FormItem>
                   <FormLabel>Tipo de Conta</FormLabel>
                   <FormControl>
-                    <RadioGroup {...field} className="flex flex-col space-y-2">
+                    <RadioGroup
+                      value={field.value} // valor atual do RHF
+                      onValueChange={field.onChange} // atualiza o RHF
+                      className="flex flex-col space-y-2"
+                    >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="supporter" id="supporter" />
                         <FormLabel htmlFor="supporter" className="text-sm">
@@ -190,7 +213,8 @@ const RegisterForm = async () => {
               type="button"
               onClick={handleGoogleRegister}
             >
-              <svg viewBox="0 0 24 24" className="mr-2 inline h-4 w-4">
+              {/* ícone Google */}
+              <svg viewBox="0 0 24 24" className="mr-2 h-4 w-4">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                   fill="#4285F4"
@@ -217,7 +241,7 @@ const RegisterForm = async () => {
           <p className="text-muted-foreground text-sm">
             Já tem uma conta?{" "}
             <Link href="/login" className="text-primary hover:underline">
-              Entrar
+              Login
             </Link>
           </p>
         </div>
