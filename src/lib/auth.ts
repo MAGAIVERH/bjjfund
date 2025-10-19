@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import * as schema from "@/db/schema";
-import { eq } from "drizzle-orm";
+import type { ExtendedUser, ExtendedSession } from "@/lib/auth-types";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -14,10 +14,20 @@ export const auth = betterAuth({
     enabled: true,
   },
 
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        required: false,
+        defaultValue: "supporter",
+      },
+    },
+  },
+
   trustedOrigins: [
     "http://localhost:3000",
     "http://localhost:3001",
-    "https://seu-dominio.vercel.app", // substitua pelo domínio real depois do deploy
+    "https://seu-dominio.vercel.app",
   ],
 
   socialProviders: {
@@ -27,33 +37,21 @@ export const auth = betterAuth({
     },
   },
 
-  events: {
-    async onUserCreated(context: any) {
-      try {
-        // ⚠️ Proteção: nem sempre `context.request` existe
-        let role = "supporter";
-
-        if (context?.request) {
-          try {
-            const body = await context.request.json();
-            if (body?.role) role = body.role;
-          } catch {
-            // ignora caso não tenha corpo JSON
-          }
-        }
-
-        // Atualiza o usuário com a role definida
-        await db
-          .update(schema.user)
-          .set({ role })
-          .where(eq(schema.user.id, context.user.id));
-
-        console.log(
-          `✅ Role "${role}" salva para o usuário ${context.user.email}`,
-        );
-      } catch (error) {
-        console.error("❌ Erro ao salvar o role do usuário:", error);
-      }
+  callbacks: {
+    session: async ({
+      session,
+      user,
+    }: {
+      session: ExtendedSession;
+      user: ExtendedUser;
+    }): Promise<ExtendedSession> => {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          role: user.role, // pega a role direto do banco
+        },
+      };
     },
   },
 });
