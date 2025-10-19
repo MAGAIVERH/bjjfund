@@ -1,0 +1,1 @@
+ALTER TABLE "athletes" ADD COLUMN "image" varchar(255);

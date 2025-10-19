@@ -22,6 +22,27 @@
       "when": 1759922835765,
       "tag": "0002_silky_kid_colt",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1760537418362,
+      "tag": "0003_dashing_the_liberteens",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1760705041590,
+      "tag": "0004_empty_lionheart",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1760877800501,
+      "tag": "0005_open_cloak",
+      "breakpoints": true
     }
   ]
 }

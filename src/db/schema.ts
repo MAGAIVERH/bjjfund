@@ -128,7 +128,12 @@ export const athletes = pgTable("athletes", {
   escola: text("escola"),
   nascimento: date("nascimento"),
   cidade: text("cidade"),
+  evento: text("evento"), // <-- adiciona aqui
+  image: varchar("image", { length: 255 }), // opcional no TS
   bio: text("bio"),
+  ouro: text("ouro").default("0"),
+  prata: text("prata").default("0"),
+  bronze: text("bronze").default("0"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
