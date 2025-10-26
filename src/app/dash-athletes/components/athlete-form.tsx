@@ -27,17 +27,24 @@ import {
   updateAthlete,
 } from "@/app/actions/athlete-actions";
 
+/** Zod: adicionamos fullImage e historia */
 const athleteSchema = z.object({
   faixa: z.string().min(1, "Faixa é obrigatória"),
   escola: z.string().min(1, "Escola é obrigatória"),
   nascimento: z.string().min(1, "Data de nascimento é obrigatória"),
   cidade: z.string().min(1, "Cidade é obrigatória"),
-  bio: z.string().optional(),
-  photo: z.string().optional(),
+  bio: z
+    .string()
+    .max(80, "A frase deve ter no máximo 80 caracteres.")
+    .min(50, "A frase deve ter no minimo 50 caracteres.")
+    .optional(),
+  photo: z.string().optional(), // avatar/rosto
+  fullImage: z.string().optional(), // ✅ corpo inteiro
+  historia: z.string().optional(), // ✅ história do atleta
   evento: z.string().optional(),
-  ouro: z.string().optional(), // novo campo
-  prata: z.string().optional(), // novo campo
-  bronze: z.string().optional(), // novo campo
+  ouro: z.string().optional(),
+  prata: z.string().optional(),
+  bronze: z.string().optional(),
 });
 
 export type AthleteFormValues = z.infer<typeof athleteSchema>;
@@ -63,10 +70,12 @@ export function AthleteForm({ onSuccess, onCancel }: AthleteFormProps) {
       cidade: "",
       bio: "",
       photo: "",
+      fullImage: "", // ✅
+      historia: "", // ✅
       evento: "",
-      ouro: "", // default vazio
-      prata: "", // default vazio
-      bronze: "", // default vazio
+      ouro: "",
+      prata: "",
+      bronze: "",
     },
   });
 
@@ -83,10 +92,12 @@ export function AthleteForm({ onSuccess, onCancel }: AthleteFormProps) {
           cidade: res.athlete.cidade || "",
           bio: res.athlete.bio || "",
           photo: res.athlete.image || "",
+          fullImage: res.athlete.fullImage || "", // ✅
+          historia: res.athlete.historia || "", // ✅
           evento: res.athlete.evento || "",
-          ouro: res.athlete.ouro || "", // preenchendo do banco
-          prata: res.athlete.prata || "", // preenchendo do banco
-          bronze: res.athlete.bronze || "", // preenchendo do banco
+          ouro: String(res.athlete.ouro ?? ""),
+          prata: String(res.athlete.prata ?? ""),
+          bronze: String(res.athlete.bronze ?? ""),
         });
       }
     };
@@ -111,6 +122,8 @@ export function AthleteForm({ onSuccess, onCancel }: AthleteFormProps) {
           cidade: values.cidade,
           bio: values.bio,
           image: values.photo,
+          fullImage: values.fullImage, // ✅
+          historia: values.historia, // ✅
           evento: values.evento || "",
           ouro: values.ouro || "",
           prata: values.prata || "",
@@ -125,6 +138,8 @@ export function AthleteForm({ onSuccess, onCancel }: AthleteFormProps) {
           cidade: values.cidade,
           bio: values.bio,
           image: values.photo,
+          fullImage: values.fullImage, // ✅
+          historia: values.historia, // ✅
           evento: values.evento || "",
           ouro: values.ouro || "",
           prata: values.prata || "",
@@ -155,32 +170,143 @@ export function AthleteForm({ onSuccess, onCancel }: AthleteFormProps) {
   }
 
   return (
-    <div className="mx-auto max-w-md rounded-2xl bg-white p-6 shadow-md">
-      <h2 className="mb-6 text-center text-xl font-bold text-gray-800">
+    <div className="mx-auto max-w-3xl rounded-2xl bg-white p-8 shadow-md">
+      <h2 className="mb-6 text-center text-2xl font-bold text-gray-800">
         Informações do Atleta
       </h2>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="flex flex-col items-center">
-            <Avatar className="mb-4 h-24 w-24">
-              {form.getValues("photo") ? (
-                <AvatarImage src={form.getValues("photo")} />
-              ) : user.image ? (
-                <AvatarImage src={user.image} />
-              ) : (
-                <AvatarFallback>{user.name?.[0] ?? "U"}</AvatarFallback>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Avatares / Previews */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="flex flex-col items-center">
+              <Avatar className="mb-3 h-24 w-24">
+                {form.getValues("photo") ? (
+                  <AvatarImage src={form.getValues("photo")} />
+                ) : user.image ? (
+                  <AvatarImage src={user.image} />
+                ) : (
+                  <AvatarFallback>{user.name?.[0] ?? "U"}</AvatarFallback>
+                )}
+              </Avatar>
+              <FormField
+                control={form.control}
+                name="photo"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>URL da Foto (rosto)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Cole a URL da foto de rosto"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="flex flex-col items-center">
+              <div className="mb-3 h-24 w-24 overflow-hidden rounded-full border">
+                {/* preview simples da fullImage (se for quadrada, cropa) */}
+                {form.getValues("fullImage") ? (
+                  <img
+                    src={form.getValues("fullImage")}
+                    alt="Full preview"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-sm text-gray-500">
+                    Sem foto
+                  </div>
+                )}
+              </div>
+              <FormField
+                control={form.control}
+                name="fullImage"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>URL da Foto Corpo Inteiro</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Cole a URL da foto corpo inteiro"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
+          {/* Campos básicos em grid */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="faixa"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Faixa</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Faixa" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            </Avatar>
+            />
 
             <FormField
               control={form.control}
-              name="photo"
+              name="escola"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>URL da Foto (opcional)</FormLabel>
+                  <FormLabel>Escola</FormLabel>
                   <FormControl>
-                    <Input placeholder="Cole a URL da foto" {...field} />
+                    <Input placeholder="Escola" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="nascimento"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Data de Nascimento</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="cidade"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cidade</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Cidade" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="evento"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Evento</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Evento do atleta" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -188,92 +314,47 @@ export function AthleteForm({ onSuccess, onCancel }: AthleteFormProps) {
             />
           </div>
 
-          <FormField
-            control={form.control}
-            name="faixa"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Faixa</FormLabel>
-                <FormControl>
-                  <Input placeholder="Faixa" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* Frase + História */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Frase do Atleta</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Frase do atleta"
+                      className="min-h-28"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="escola"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Escola</FormLabel>
-                <FormControl>
-                  <Input placeholder="Escola" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="historia"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>História do Atleta</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Conte um pouco da sua trajetória"
+                      className="min-h-28"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-          <FormField
-            control={form.control}
-            name="nascimento"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Data de Nascimento</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="evento"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Evento</FormLabel>
-                <FormControl>
-                  <Input placeholder="Evento do atleta" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="cidade"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Cidade</FormLabel>
-                <FormControl>
-                  <Input placeholder="Cidade" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="bio"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Frase do Atleta</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="Frase do atleta" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* NOVOS CAMPOS */}
-          <div className="grid grid-cols-3 gap-3">
+          {/* Medalhas */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <FormField
               control={form.control}
               name="ouro"
@@ -281,13 +362,12 @@ export function AthleteForm({ onSuccess, onCancel }: AthleteFormProps) {
                 <FormItem>
                   <FormLabel>Ouro 🥇</FormLabel>
                   <FormControl>
-                    <Input placeholder="0" {...field} />
+                    <Input inputMode="numeric" placeholder="0" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="prata"
@@ -295,13 +375,12 @@ export function AthleteForm({ onSuccess, onCancel }: AthleteFormProps) {
                 <FormItem>
                   <FormLabel>Prata 🥈</FormLabel>
                   <FormControl>
-                    <Input placeholder="0" {...field} />
+                    <Input inputMode="numeric" placeholder="0" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="bronze"
@@ -309,7 +388,7 @@ export function AthleteForm({ onSuccess, onCancel }: AthleteFormProps) {
                 <FormItem>
                   <FormLabel>Bronze 🥉</FormLabel>
                   <FormControl>
-                    <Input placeholder="0" {...field} />
+                    <Input inputMode="numeric" placeholder="0" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -317,11 +396,11 @@ export function AthleteForm({ onSuccess, onCancel }: AthleteFormProps) {
             />
           </div>
 
+          {/* Ações */}
           <div className="flex flex-col gap-3 pt-2 md:flex-row">
             <Button type="submit" className="flex-1" disabled={loading}>
               {loading ? "Salvando..." : "Salvar"}
             </Button>
-
             {onCancel && (
               <Button
                 type="button"

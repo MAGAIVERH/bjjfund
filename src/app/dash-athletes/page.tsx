@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // <-- import do router
+import { useRouter } from "next/navigation";
 import { AthleteProfileCard } from "./components/athlete-profile-card";
 import { AthleteChartCard } from "./components/athlete-chart-card";
 import { AthleteForm, AthleteFormValues } from "./components/athlete-form";
@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 export default function AthleteDashboard() {
   const { data, isPending } = useSession();
   const user = data?.user;
-  const router = useRouter(); // <-- instanciando router
+  const router = useRouter();
 
   const [athleteData, setAthleteData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,7 +38,7 @@ export default function AthleteDashboard() {
       ...(prev || {}),
       ...data,
       name: user?.name || prev?.name || "",
-      avatar: data.photo || user?.image || prev?.avatar || null,
+      image: data.photo || user?.image || prev?.image || null,
     }));
     setEditing(false);
   };
@@ -60,13 +60,16 @@ export default function AthleteDashboard() {
         />
       ) : (
         <>
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-2 flex items-center justify-between">
             <h1 className="text-2xl font-bold text-gray-800">
               Dashboard Atleta
+              <p className="mt-4 text-sm text-gray-600">
+                Gerencie seu perfil e acompanhe o apoio que impulsiona sua
+                jornada!
+              </p>
             </h1>
 
             <div className="flex gap-4">
-              {/* Botão Editar informações estilo ghost */}
               <Button
                 variant="ghost"
                 className="text-primary flex items-center gap-2 rounded-xl transition-colors duration-300 hover:bg-black hover:text-white"
@@ -76,7 +79,6 @@ export default function AthleteDashboard() {
                 Editar informações
               </Button>
 
-              {/* Botão Sair */}
               <Button
                 className="bg-primary hover:bg-primary/90 flex items-center gap-2 rounded-xl text-white transition-colors duration-300"
                 onClick={() => router.push("/")}
@@ -87,12 +89,17 @@ export default function AthleteDashboard() {
             </div>
           </div>
 
-          {/* Layout dos cards */}
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             <div className="md:col-span-1">
               <AthleteProfileCard
                 name={athleteData.name}
-                avatar={athleteData.avatar || null}
+                avatar={
+                  athleteData.avatar ||
+                  athleteData.image ||
+                  athleteData.fullImage ||
+                  user?.image ||
+                  null
+                }
                 faixa={athleteData.faixa}
                 escola={athleteData.escola}
                 nascimento={athleteData.nascimento}
