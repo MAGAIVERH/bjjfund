@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { authClient } from "@/lib/auth-client";
 import { setRole } from "@/app/actions/auth-roles";
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const registerSchema = z.object({
   name: z.string().trim().min(1, "Nome completo é obrigatório"),
@@ -114,8 +115,16 @@ const RegisterForm = () => {
 
   return (
     <Card className="mx-auto w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Criar Conta</CardTitle>
+      <CardHeader className="text-center">
+        {/* ✅ moveu os botões aqui */}
+        <div className="mb-4">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="login">Login</TabsTrigger>
+            <TabsTrigger value="register">Criar conta</TabsTrigger>
+          </TabsList>
+        </div>
+
+        <CardTitle className="text-2xl font-bold">Criar Conta</CardTitle>
         <CardDescription>
           Junte-se à nossa plataforma de crowdfunding para atletas
         </CardDescription>
