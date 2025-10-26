@@ -130,6 +130,8 @@ export const athletes = pgTable("athletes", {
   cidade: text("cidade"),
   evento: text("evento"), // <-- adiciona aqui
   image: varchar("image", { length: 255 }), // opcional no TS
+  fullImage: text("full_image"), // ✅ nova foto corpo inteiro
+  historia: text("historia"), // ✅ texto da história
   bio: text("bio"),
   ouro: text("ouro").default("0"),
   prata: text("prata").default("0"),

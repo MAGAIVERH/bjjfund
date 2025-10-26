@@ -8,7 +8,7 @@ export interface ExtendedUser {
   createdAt: Date;
   updatedAt: Date;
   image?: string | null;
-  role?: string;
+  role?: "athlete" | "supporter" | "admin"; // ✅ adiciona o campo role
 }
 
 export interface ExtendedSession extends Omit<Session, "user"> {
