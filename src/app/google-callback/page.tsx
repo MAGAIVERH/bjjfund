@@ -6,6 +6,17 @@
 // import { authClient } from "@/lib/auth-client";
 // import type { ExtendedUser } from "@/lib/auth-types";
 
+// /** 🔹 Função auxiliar: verifica se o atleta já tem campanha ativa */
+// async function hasActiveCampaign(userId: string): Promise<boolean> {
+//   try {
+//     const res = await fetch(`/api/check-campaign?userId=${userId}`);
+//     const data = await res.json();
+//     return data.hasActive;
+//   } catch {
+//     return false;
+//   }
+// }
+
 // export default function GoogleCallbackPage() {
 //   const router = useRouter();
 //   const [isLoading, setIsLoading] = useState(true);
@@ -13,7 +24,6 @@
 //   useEffect(() => {
 //     const handleGoogleCallback = async () => {
 //       try {
-//         // Pega a sessão atual do usuário
 //         const sessionRes = await authClient.getSession();
 //         const user = sessionRes?.data?.user as ExtendedUser | undefined;
 
@@ -25,11 +35,21 @@
 
 //         toast.success("Login realizado com sucesso!");
 
-//         // Redireciona conforme a role
-//         if (user.role === "admin") router.push("/dashboard");
-//         else if (user.role === "athlete") router.push("/dash-athletes");
-//         else if (user.role === "supporter") router.push("/dash-donors");
-//         else router.push("/authentication");
+//         if (user.role === "admin") {
+//           router.push("/dashboard");
+//         } else if (user.role === "supporter") {
+//           toast.error("Apenas atletas podem criar campanhas.");
+//           router.push("/dash-donors");
+//         } else if (user.role === "athlete") {
+//           const hasCampaign = await hasActiveCampaign(user.id);
+//           if (hasCampaign) {
+//             router.push("/dash-athletes");
+//           } else {
+//             router.push("/create-campaigns");
+//           }
+//         } else {
+//           router.push("/");
+//         }
 //       } catch (err) {
 //         console.error("Erro no callback do Google:", err);
 //         toast.error("Erro ao processar login com Google.");
@@ -93,10 +113,20 @@ export default function GoogleCallbackPage() {
 
         toast.success("Login realizado com sucesso!");
 
+        // 🔹 NOVO: se doador veio de uma campanha, direciona para destaque
+        if (user.role === "supporter") {
+          const pendingAthleteId = localStorage.getItem("pendingAthleteId");
+          if (pendingAthleteId) {
+            localStorage.removeItem("pendingAthleteId");
+            router.push(`/dash-donors?highlight=${pendingAthleteId}`);
+            return;
+          }
+        }
+
+        // 🔹 Fluxo padrão
         if (user.role === "admin") {
           router.push("/dashboard");
         } else if (user.role === "supporter") {
-          toast.error("Apenas atletas podem criar campanhas.");
           router.push("/dash-donors");
         } else if (user.role === "athlete") {
           const hasCampaign = await hasActiveCampaign(user.id);
