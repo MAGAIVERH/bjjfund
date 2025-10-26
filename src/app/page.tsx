@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Head from "next/head";
 import { Header } from "./landing/header";
 import { Footer } from "./landing/footer";
 import { HeroSection } from "./landing/hero-section";
@@ -9,6 +8,7 @@ import { CTASection } from "./landing/cta-section";
 import { FeaturesSection } from "./landing/features-section";
 import { HowItWorks } from "./landing/how-it-works";
 import { SuccessStories } from "./landing/success-stories";
+import { CampaignsSection } from "./landing/campaigns-section";
 
 export default function HomePage() {
   const [isVisible, setIsVisible] = useState({
@@ -75,6 +75,14 @@ export default function HomePage() {
         {/* Call To Action */}
         <section id="cta" className={sectionClass(isVisible.cta, 800)}>
           <CTASection />
+        </section>
+
+        {/* Campanhas Recentes */}
+        <section
+          id="campanhas"
+          className={sectionClass(isVisible.stories, 700)}
+        >
+          <CampaignsSection />
         </section>
       </main>
 

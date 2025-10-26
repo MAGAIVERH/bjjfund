@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Trophy, ArrowRight, Users } from "lucide-react";
@@ -8,7 +10,6 @@ export function CTASection() {
     <section className="from-primary/5 to-accent/5 bg-gradient-to-br via-white py-24">
       <div className="container mx-auto px-6">
         <div className="mx-auto max-w-4xl">
-          {/* Main CTA */}
           <Card className="border-primary/20 to-primary/5 border-2 bg-gradient-to-br from-white">
             <CardContent className="p-12 text-center">
               <div className="space-y-8">
@@ -38,7 +39,7 @@ export function CTASection() {
                         jiu-jitsu brasileiro.
                       </p>
                       <Button asChild size="lg" className="w-full">
-                        <Link href="/register">
+                        <Link href="/authentication">
                           <Heart className="mr-2 h-5 w-5" />
                           Começar a Apoiar
                           <ArrowRight className="ml-2 h-5 w-5" />
@@ -57,13 +58,14 @@ export function CTASection() {
                         transparentes e conecte-se com apoiadores que acreditam
                         no seu potencial.
                       </p>
+
                       <Button
                         asChild
                         variant="outline"
                         size="lg"
                         className="w-full bg-transparent"
                       >
-                        <Link href="/register">
+                        <Link href="/authentication">
                           <Trophy className="mr-2 h-5 w-5" />
                           Criar Campanha
                           <ArrowRight className="ml-2 h-5 w-5" />
@@ -73,7 +75,6 @@ export function CTASection() {
                   </div>
                 </div>
 
-                {/* Trust Indicators */}
                 <div className="border-t pt-8">
                   <div className="text-muted-foreground flex items-center justify-center gap-8">
                     <div className="flex items-center gap-2">
