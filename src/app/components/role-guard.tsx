@@ -6,60 +6,79 @@ import { useRouter, usePathname } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import type { ExtendedSession } from "@/lib/auth-types";
 
-export function RoleGuard({ children }: { children: React.ReactNode }) {
+interface RoleGuardProps {
+  children: React.ReactNode;
+  allowedRoles?: string[]; // ✅ permite limitar o acesso por role
+}
+
+export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { data: session, isPending } = useSession() as {
     data: ExtendedSession | null;
     isPending: boolean;
   };
+
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
     if (isPending) {
-      console.log("[v0] RoleGuard: Aguardando sessão carregar...");
+      console.log("[RoleGuard] Aguardando sessão carregar...");
       return;
     }
 
-    console.log("[v0] RoleGuard: Sessão carregada", {
-      user: session?.user,
-      pathname,
-      role: session?.user?.role,
-      emailVerified: session?.user?.emailVerified,
-    });
+    const user = session?.user;
 
-    // Se não tem sessão, redireciona para login
-    if (!session?.user) {
+    // 🔒 Se não tem sessão → login
+    if (!user) {
       console.log(
-        "[v0] RoleGuard: Sem sessão, redirecionando para /authentication",
+        "[RoleGuard] Sem sessão, redirecionando para /authentication",
       );
       router.push("/authentication");
       return;
     }
 
-    const user = session.user;
+    const role = user.role ?? ""; // ✅ garante que nunca é undefined
 
-    // Se o usuário tem role "athlete", deve estar em /dashboard/athlete
-    // Se o usuário tem role "supporter", deve estar em /dashboard/donor
-    if (pathname.startsWith("/dashboard/athlete") && user.role !== "athlete") {
+    console.log("[RoleGuard] Sessão carregada", {
+      user: user?.name,
+      role,
+      path: pathname,
+    });
+
+    // ✅ Verifica se o papel do usuário é permitido
+    if (allowedRoles && !allowedRoles.includes(role)) {
+      console.warn(
+        `[RoleGuard] Acesso negado: '${role}' não está em ${allowedRoles}`,
+      );
+
+      // comportamento padrão → redireciona para o dashboard correto
+      if (role === "athlete") router.push("/dashboard/athlete");
+      else if (role === "supporter") router.push("/dashboard/donor");
+      else router.push("/");
+
+      return;
+    }
+
+    // 🔐 Mantém as regras antigas (dashboards)
+    if (pathname.startsWith("/dashboard/athlete") && role !== "athlete") {
       console.log(
-        "[v0] RoleGuard: Usuário não é atleta, redirecionando para /dashboard/donor",
+        "[RoleGuard] Usuário não é atleta, redirecionando para /dashboard/donor",
       );
       router.push("/dashboard/donor");
       return;
     }
 
-    if (pathname.startsWith("/dashboard/donor") && user.role !== "supporter") {
+    if (pathname.startsWith("/dashboard/donor") && role !== "supporter") {
       console.log(
-        "[v0] RoleGuard: Usuário não é apoiador, redirecionando para /dashboard/athlete",
+        "[RoleGuard] Usuário não é apoiador, redirecionando para /dashboard/athlete",
       );
       router.push("/dashboard/athlete");
       return;
     }
 
-    console.log("[v0] RoleGuard: Verificações OK, mostrando conteúdo");
     setIsChecking(false);
-  }, [session, isPending, router, pathname]);
+  }, [session, isPending, router, pathname, allowedRoles]);
 
   if (isPending || isChecking) {
     return (
