@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/db";
-import { athletes, user } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { athletes, campaigns, donations, user } from "@/db/schema";
+import { eq, sql } from "drizzle-orm";
 import { randomUUID } from "crypto";
 
 /**
@@ -186,13 +186,13 @@ export async function getAllAthletes() {
   try {
     const result = await db
       .select({
+        // Dados do Atleta
         athleteId: athletes.id,
         userId: athletes.userId,
         name: user.name,
         userImage: user.image,
         athleteImage: athletes.image,
         fullImage: athletes.fullImage,
-        historia: athletes.historia, // ✅ incluída também
         faixa: athletes.faixa,
         escola: athletes.escola,
         nascimento: athletes.nascimento,
@@ -202,11 +202,37 @@ export async function getAllAthletes() {
         ouro: athletes.ouro,
         prata: athletes.prata,
         bronze: athletes.bronze,
+
+        // ✅ CAMPANHA (pode não existir ainda)
+        campaignId: campaigns.id,
+
+        // ✅ Doações reais
+        totalAmount: sql<number>`COALESCE(SUM(${donations.amount}), 0)`,
+        totalSupporters: sql<number>`COUNT(DISTINCT ${donations.donorUserId})`,
       })
       .from(athletes)
-      .leftJoin(user, eq(athletes.userId, user.id));
+      .leftJoin(user, eq(athletes.userId, user.id))
+      .leftJoin(campaigns, eq(campaigns.athleteId, athletes.id))
+      .leftJoin(donations, eq(donations.athleteId, athletes.id)) // <--- JOIN com doações
+      .groupBy(
+        athletes.id,
+        user.name,
+        user.image,
+        athletes.image,
+        athletes.fullImage,
+        athletes.faixa,
+        athletes.escola,
+        athletes.nascimento,
+        athletes.cidade,
+        athletes.bio,
+        athletes.evento,
+        athletes.ouro,
+        athletes.prata,
+        athletes.bronze,
+        campaigns.id,
+      );
 
-    /** 🧠 CORREÇÃO — Prioridade certa no avatar */
+    // ✅ Normalização do avatar
     const normalized = result.map((r) => ({
       ...r,
       avatar:
