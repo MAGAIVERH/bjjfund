@@ -43,6 +43,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "jiujitsubjj.com",
       },
+      {
+        protocol: "https",
+        hostname: "scontent.cdninstagram.com",
+      },
+      {
+        protocol: "https",
+        hostname: "scontent.xx.fbcdn.net",
+      },
     ],
   },
 };
