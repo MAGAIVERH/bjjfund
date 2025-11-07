@@ -9,6 +9,7 @@ import { FeaturesSection } from "./landing/features-section";
 import { HowItWorks } from "./landing/how-it-works";
 import { SuccessStories } from "./landing/success-stories";
 import { CampaignsSection } from "./landing/campaigns-section";
+import { AllWinSection } from "./landing/all-win";
 
 export default function HomePage() {
   const [isVisible, setIsVisible] = useState({
@@ -83,6 +84,14 @@ export default function HomePage() {
           className={sectionClass(isVisible.stories, 700)}
         >
           <CampaignsSection />
+        </section>
+
+        {/* TODOS GANHAM – NOVO COMPONENTE */}
+        <section
+          id="todos-ganham"
+          className={sectionClass(isVisible.stories, 900)}
+        >
+          <AllWinSection />
         </section>
       </main>
 
