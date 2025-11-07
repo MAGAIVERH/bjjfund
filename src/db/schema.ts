@@ -170,6 +170,7 @@ export const campaigns = pgTable(
     goalAmount: numeric("goal_amount", { precision: 12, scale: 2 }).default(
       "0",
     ),
+    campaignImage: text("campaign_image"), // ✅ NOVO CAMPO
     collectedAmount: numeric("collected_amount", {
       precision: 12,
       scale: 2,
