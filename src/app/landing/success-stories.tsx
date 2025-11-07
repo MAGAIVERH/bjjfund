@@ -135,6 +135,8 @@ export function SuccessStories() {
                     ouro={Number(athlete.ouro) || 0}
                     prata={Number(athlete.prata) || 0}
                     bronze={Number(athlete.bronze) || 0}
+                    totalAmount={Number(athlete.totalAmount) || 0}
+                    totalSupporters={Number(athlete.totalSupporters) || 0}
                     showDonateCta={false}
                     className="w-full"
                   />

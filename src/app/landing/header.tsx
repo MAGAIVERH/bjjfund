@@ -9,8 +9,8 @@ import { Trophy, Menu, Heart } from "lucide-react";
 const navigation = [
   { name: "Como Funciona", href: "#como-funciona" },
   { name: "Histórias", href: "#historias" },
-  { name: "Campanhas", href: "/campaigns" },
-  { name: "Sobre", href: "#sobre" },
+  { name: "Campanhas", href: "#campanhas" },
+  { name: "Todos Ganham", href: "#todos-ganham" },
 ];
 
 export function Header() {

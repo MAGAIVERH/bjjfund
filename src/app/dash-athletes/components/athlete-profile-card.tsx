@@ -19,6 +19,8 @@ interface AthleteProfileCardProps {
   ouro?: number;
   prata?: number;
   bronze?: number;
+  totalAmount?: number;
+  totalSupporters?: number;
   className?: string;
   showDonateCta?: boolean;
   onDonate?: () => void;
@@ -33,6 +35,8 @@ export function AthleteProfileCard({
   cidade,
   bio,
   evento,
+  totalAmount,
+  totalSupporters,
   ouro = 0,
   prata = 0,
   bronze = 0,
@@ -75,7 +79,7 @@ export function AthleteProfileCard({
           <div>
             <Quote className="text-primary mb-3 h-6 w-6" />
             <p
-              className="overflow-hidden text-lg leading-relaxed break-words text-ellipsis text-gray-700 italic"
+              className="line-clamp-2 text-lg leading-relaxed text-gray-700 italic"
               style={{ wordBreak: "break-word", maxWidth: "100%" }}
             >
               {bio || "Nenhuma frase cadastrada"}
@@ -84,12 +88,13 @@ export function AthleteProfileCard({
 
           {/* Info principal */}
           <div className="flex items-center gap-4">
-            <Avatar className="h-14 w-14 border border-gray-200 bg-gray-100">
+            <Avatar className="h-16 w-16 border border-gray-200 bg-gray-100">
               {validImage ? (
                 <AvatarImage
                   src={validImage}
                   alt={name || "Avatar"}
                   onError={() => setValidImage(null)}
+                  className="rounded-full object-cover"
                 />
               ) : (
                 <AvatarFallback className="bg-gray-200 font-semibold text-gray-700">
@@ -155,11 +160,17 @@ export function AthleteProfileCard({
 
           <div className="grid grid-cols-2 text-center">
             <div>
-              <div className="text-2xl font-bold text-red-700">R$ 18.500</div>
+              <div className="text-2xl font-bold text-red-700">
+                {totalAmount
+                  ? `R$ ${totalAmount.toLocaleString("pt-BR")}`
+                  : "R$ 0"}
+              </div>
               <div className="text-sm text-gray-600">Arrecadado</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-red-700">127</div>
+              <div className="text-2xl font-bold text-red-700">
+                {totalSupporters ?? 0}
+              </div>
               <div className="text-sm text-gray-600">Apoiadores</div>
             </div>
           </div>

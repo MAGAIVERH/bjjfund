@@ -57,7 +57,21 @@ export default function AthleteSwitcherCard({
   const handleDonate = async (amount: number) => {
     try {
       setLoading(true);
-      await createCheckoutSession(athlete.athleteId, athlete.name, amount);
+
+      // 🔹 Recupera campaignId salvo no localStorage (se veio da home)
+      const campaignId = localStorage.getItem("pendingCampaignId");
+
+      // 🔹 Chama a função de checkout incluindo o campaignId (se existir)
+      await createCheckoutSession(
+        athlete.athleteId,
+        athlete.name,
+        amount,
+        campaignId ?? undefined,
+      );
+
+      // 🔹 Limpa o localStorage após usar
+      localStorage.removeItem("pendingAthleteId");
+      localStorage.removeItem("pendingCampaignId");
     } catch (error) {
       console.error("Erro ao iniciar doação:", error);
     } finally {

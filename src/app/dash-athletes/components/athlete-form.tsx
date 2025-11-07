@@ -35,7 +35,7 @@ const athleteSchema = z.object({
   cidade: z.string().min(1, "Cidade é obrigatória"),
   bio: z
     .string()
-    .max(80, "A frase deve ter no máximo 80 caracteres.")
+    .max(100, "A frase deve ter no máximo 80 caracteres.")
     .min(50, "A frase deve ter no minimo 50 caracteres.")
     .optional(),
   photo: z.string().optional(), // avatar/rosto
