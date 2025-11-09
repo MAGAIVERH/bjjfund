@@ -1,14 +1,9 @@
 "use server";
 
 import { db } from "@/db";
-import { athletes, user } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { athletes, user, donations } from "@/db/schema"; // ⬅️ adicione 'donations'
+import { eq, sql } from "drizzle-orm"; // ⬅️ adicione 'sql'
 
-/**
- * Busca todos os atletas cadastrados na plataforma,
- * incluindo as imagens de perfil do Google ou manuais,
- * e aplica fallback para garantir que sempre exista um avatar.
- */
 export async function getAllAthletes() {
   try {
     const result = await db
@@ -17,12 +12,12 @@ export async function getAllAthletes() {
         userId: athletes.userId,
         name: user.name,
 
-        // ---- imagens ----
-        userImage: user.image, // foto do Google (Better Auth)
-        athleteImage: athletes.image, // foto de rosto (upload manual)
-        fullImage: athletes.fullImage, // corpo inteiro (upload)
+        // imagens
+        userImage: user.image,
+        athleteImage: athletes.image,
+        fullImage: athletes.fullImage,
 
-        // ---- outros campos ----
+        // outros campos
         faixa: athletes.faixa,
         escola: athletes.escola,
         cidade: athletes.cidade,
@@ -33,11 +28,37 @@ export async function getAllAthletes() {
         ouro: athletes.ouro,
         prata: athletes.prata,
         bronze: athletes.bronze,
+
+        // ⬇️ agregados de doações (por atleta)
+        collectedAmount: sql<number>`
+          COALESCE(SUM(CAST(${donations.amount} AS DECIMAL)), 0)
+        `,
+        supportersCount: sql<number>`
+          COALESCE(COUNT(DISTINCT ${donations.donorUserId}), 0)
+        `,
       })
       .from(athletes)
-      .leftJoin(user, eq(athletes.userId, user.id));
+      .leftJoin(user, eq(athletes.userId, user.id))
+      .leftJoin(donations, eq(donations.athleteId, athletes.id)) // ⬅️ liga doações ao atleta
+      .groupBy(
+        athletes.id,
+        athletes.userId,
+        user.name,
+        user.image,
+        athletes.image,
+        athletes.fullImage,
+        athletes.faixa,
+        athletes.escola,
+        athletes.cidade,
+        athletes.nascimento,
+        athletes.bio,
+        athletes.historia,
+        athletes.evento,
+        athletes.ouro,
+        athletes.prata,
+        athletes.bronze,
+      );
 
-    // Normaliza o retorno e aplica fallback de imagem
     const normalized = result.map((r) => ({
       athleteId: r.athleteId,
       userId: r.userId,
@@ -53,17 +74,21 @@ export async function getAllAthletes() {
       prata: Number(r.prata ?? 0),
       bronze: Number(r.bronze ?? 0),
 
-      // imagem final com fallback
-      avatar:
-        r.athleteImage || // upload de rosto
-        r.fullImage || // corpo inteiro
-        r.userImage || // foto do Google
-        null,
+      // avatar com fallback
+      avatar: r.athleteImage || r.fullImage || r.userImage || null,
 
-      // campos brutos (para compatibilidade com AthleteSwitcherCard)
+      // brutos (compat)
       image: r.athleteImage,
       fullImage: r.fullImage,
       userImage: r.userImage,
+
+      // ⬇️ aqui vão os números que o card exibe
+      collectedAmount: Number(r.collectedAmount ?? 0),
+      supportersCount: Number(r.supportersCount ?? 0),
+
+      // aliases de compatibilidade, caso o componente use outros nomes
+      totalAmount: Number(r.collectedAmount ?? 0),
+      totalSupporters: Number(r.supportersCount ?? 0),
     }));
 
     return { success: true, athletes: normalized };
