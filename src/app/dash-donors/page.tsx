@@ -1,165 +1,3 @@
-// "use client";
-
-// import { useEffect, useRef, useState } from "react";
-// import { useSession } from "@/lib/auth-client";
-// import { getAllAthletes } from "../actions/athlete-support-actions";
-// import { useRouter } from "next/navigation";
-// import { LogOut, ChevronLeft, ChevronRight } from "lucide-react";
-// import { Button } from "@/components/ui/button";
-// import AthleteSwitcherCard from "./components/athlete-switcher-card";
-
-// export default function DonorDashboard() {
-//   const { data, isPending } = useSession();
-//   const user = data?.user;
-//   const router = useRouter();
-
-//   const [athletes, setAthletes] = useState<any[]>([]);
-//   const [loading, setLoading] = useState(true);
-//   const [paused, setPaused] = useState(false);
-//   const containerRef = useRef<HTMLDivElement>(null);
-
-//   useEffect(() => {
-//     const loadAthletes = async () => {
-//       const res = await getAllAthletes();
-//       if (res.success) setAthletes(res.athletes || []);
-//       setLoading(false);
-//     };
-//     loadAthletes();
-//   }, []);
-
-//   const scrollManual = (dir: "left" | "right") => {
-//     const el = containerRef.current;
-//     if (!el) return;
-//     setPaused(true);
-//     const amount = el.clientWidth * 0.8;
-//     el.scrollBy({
-//       left: dir === "left" ? -amount : amount,
-//       behavior: "smooth",
-//     });
-//   };
-
-//   if (!user || isPending || loading) {
-//     return (
-//       <div className="flex min-h-screen items-center justify-center">
-//         Carregando atletas...
-//       </div>
-//     );
-//   }
-
-//   if (!athletes.length) {
-//     return (
-//       <div className="flex min-h-screen items-center justify-center text-gray-600">
-//         Nenhum atleta cadastrado ainda.
-//       </div>
-//     );
-//   }
-
-//   // duplicamos pra efeito de looping infinito
-//   const loopList = [...athletes, ...athletes];
-
-//   return (
-//     <section
-//       className="relative overflow-hidden bg-white py-16"
-//       onMouseEnter={() => setPaused(true)}
-//       onMouseLeave={() => setPaused(false)}
-//     >
-//       <div className="container mx-auto px-6">
-//         {/* Cabeçalho */}
-//         <div className="mb-8 flex items-center justify-between">
-//           <div>
-//             <h1 className="text-2xl font-bold text-gray-800">
-//               Dashboard do Apoiador
-//             </h1>
-//             <p className="mt-2 text-sm text-gray-600">
-//               Clique em um atleta para ver a foto e doar à história.
-//             </p>
-//           </div>
-//           <Button
-//             className="bg-primary hover:bg-primary/90 flex items-center gap-2 rounded-xl text-white transition-colors duration-300"
-//             onClick={() => router.push("/")}
-//           >
-//             <LogOut className="h-4 w-4" />
-//             Sair
-//           </Button>
-//         </div>
-
-//         {/* Carrossel com os cards */}
-//         <div className="relative flex items-center">
-//           {/* Botão Esquerdo */}
-//           <Button
-//             variant="ghost"
-//             size="icon"
-//             className="absolute top-1/2 -left-12 z-10 hidden -translate-y-1/2 rounded-full bg-white/80 shadow backdrop-blur hover:bg-white lg:flex"
-//             onClick={() => scrollManual("left")}
-//           >
-//             <ChevronLeft className="h-6 w-6" />
-//           </Button>
-
-//           {/* Faixa rolável */}
-//           <div ref={containerRef} className="w-full overflow-hidden">
-//             <div
-//               className="marquee-track flex items-stretch justify-start gap-4"
-//               style={{
-//                 animationPlayState: paused
-//                   ? ("paused" as const)
-//                   : ("running" as const),
-//               }}
-//             >
-//               {loopList.map((athlete, i) => (
-//                 <div
-//                   key={i}
-//                   className="flex-none"
-//                   style={
-//                     {
-//                       "--card-width": "420px",
-//                       width: "var(--card-width)",
-//                       height: "700px",
-//                     } as React.CSSProperties
-//                   }
-//                 >
-//                   <AthleteSwitcherCard
-//                     athlete={athlete}
-//                     fixedHeight={560}
-//                     showDonateButton
-//                   />
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-
-//           {/* Botão Direito */}
-//           <Button
-//             variant="ghost"
-//             size="icon"
-//             className="absolute top-1/2 -right-12 z-10 hidden -translate-y-1/2 rounded-full bg-white/80 shadow backdrop-blur hover:bg-white lg:flex"
-//             onClick={() => scrollManual("right")}
-//           >
-//             <ChevronRight className="h-6 w-6" />
-//           </Button>
-//         </div>
-//       </div>
-
-//       {/* CSS para movimento automático */}
-//       <style jsx>{`
-//         @keyframes marquee {
-//           0% {
-//             transform: translateX(0);
-//           }
-//           100% {
-//             transform: translateX(-50%);
-//           }
-//         }
-
-//         .marquee-track {
-//           width: max-content;
-//           animation: marquee 40s linear infinite;
-//           will-change: transform;
-//         }
-//       `}</style>
-//     </section>
-//   );
-// }
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -182,6 +20,7 @@ export default function DonorDashboard() {
   const [paused, setPaused] = useState(false);
   const [isDonating, setIsDonating] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const loadAthletes = async () => {
@@ -256,7 +95,7 @@ export default function DonorDashboard() {
 
   return (
     <section
-      className="relative overflow-hidden bg-white py-16"
+      className="relative min-h-screen overflow-x-hidden overflow-y-hidden bg-white pt-6"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -292,43 +131,45 @@ export default function DonorDashboard() {
 
       {/* Cabeçalho principal */}
       <div className="container mx-auto px-6">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
+        <div className="mb-8 flex flex-col items-center lg:flex-row lg:items-center lg:justify-between">
+          {/* Texto centralizado no mobile */}
+          <div className="pt-10 text-center lg:pt-0 lg:text-left">
             <h1 className="text-2xl font-bold text-gray-800">
               Dashboard do Apoiador
             </h1>
             <p className="mt-2 text-sm text-gray-600">
-              Clique em um atleta para ver a foto e doar à história.
+              Clique na foto para conhecer o atleta.
             </p>
           </div>
+
+          {/* Botão Sair (esconde no mobile e aparece depois do botão Doar) */}
           <Button
-            className="bg-primary hover:bg-primary/90 flex items-center gap-2 rounded-xl text-white transition-colors duration-300"
+            className="bg-primary hover:bg-primary/90 mt-4 hidden gap-2 rounded-xl text-white transition lg:mt-0 lg:flex"
             onClick={() => router.push("/")}
           >
-            <LogOut className="h-4 w-4" />
-            Sair
+            <LogOut className="h-4 w-4" /> Sair
           </Button>
         </div>
 
         {/* Carrossel */}
         <div className="relative flex items-center">
-          {/* Botão Esquerdo */}
+          {/* ✅ DESKTOP (mantém igual) */}
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-1/2 -left-12 z-10 hidden -translate-y-1/2 rounded-full bg-white/80 shadow backdrop-blur hover:bg-white lg:flex"
+            className="bg-primary absolute top-1/2 -left-12 z-10 hidden -translate-y-1/2 rounded-full text-white shadow backdrop-blur transition-all duration-300 hover:bg-black hover:text-white lg:flex"
             onClick={() => scrollManual("left")}
           >
             <ChevronLeft className="h-6 w-6" />
           </Button>
 
-          {/* Faixa rolável */}
-          <div ref={containerRef} className="w-full overflow-hidden">
+          <div
+            ref={containerRef}
+            className="hidden w-full overflow-hidden lg:block"
+          >
             <div
               className="marquee-track flex items-stretch justify-start gap-4"
-              style={{
-                animationPlayState: paused ? "paused" : "running",
-              }}
+              style={{ animationPlayState: paused ? "paused" : "running" }}
             >
               {loopList.map((athlete, i) => (
                 <div
@@ -352,15 +193,67 @@ export default function DonorDashboard() {
             </div>
           </div>
 
-          {/* Botão Direito */}
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-1/2 -right-12 z-10 hidden -translate-y-1/2 rounded-full bg-white/80 shadow backdrop-blur hover:bg-white lg:flex"
+            className="bg-primary absolute top-1/2 -right-12 z-10 hidden -translate-y-1/2 rounded-full text-white shadow backdrop-blur transition-all duration-300 hover:bg-black hover:text-white lg:flex"
             onClick={() => scrollManual("right")}
           >
             <ChevronRight className="h-6 w-6" />
           </Button>
+
+          {/* ✅ MOBILE – UM CARD DE CADA VEZ */}
+          <div className="relative flex w-full flex-col items-center lg:hidden">
+            <div className="flex w-full justify-center">
+              <div className="w-[90%] max-w-[360px]">
+                <AthleteSwitcherCard
+                  athlete={athletes[currentIndex]}
+                  fixedHeight={560}
+                  showDonateButton
+                />
+              </div>
+            </div>
+
+            {/* ✅ Botões laterais — aparecem somente se +1 atleta */}
+            {athletes.length > 1 && (
+              <>
+                {/* Botão Esquerdo */}
+                <button
+                  onClick={() =>
+                    setCurrentIndex((prev) =>
+                      prev === 0 ? athletes.length - 1 : prev - 1,
+                    )
+                  }
+                  className="bg-primary absolute top-1/2 -left-4 -translate-y-1/2 rounded-full p-2 shadow-md transition hover:bg-black"
+                >
+                  <ChevronLeft className="h-4 w-4 text-white" />
+                </button>
+
+                {/* Botão Direito */}
+                <button
+                  onClick={() =>
+                    setCurrentIndex((prev) =>
+                      prev === athletes.length - 1 ? 0 : prev + 1,
+                    )
+                  }
+                  className="bg-primary absolute top-1/2 -right-4 -translate-y-1/2 rounded-full p-2 shadow-md transition hover:bg-black"
+                >
+                  <ChevronRight className="h-4 w-4 text-white" />
+                </button>
+              </>
+            )}
+            {/* Botão Sair no mobile abaixo do Doar */}
+            {athletes.length > 0 && (
+              <div className="mt-16 flex w-full justify-center lg:hidden">
+                <Button
+                  onClick={() => router.push("/")}
+                  className="w-[70%] max-w-[360px] rounded-xl bg-black py-2 text-white transition hover:bg-gray-800"
+                >
+                  <LogOut className="h-4 w-4" /> Sair
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

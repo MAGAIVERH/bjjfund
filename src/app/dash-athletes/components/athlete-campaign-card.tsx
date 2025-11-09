@@ -1,174 +1,3 @@
-// "use client";
-
-// import { useState } from "react";
-// import { useRouter } from "next/navigation";
-// import Image from "next/image";
-// import { useSession } from "@/lib/auth-client";
-// import { toast } from "sonner";
-// import { Button } from "@/components/ui/button";
-// import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-// import { deleteCampaign } from "@/app/actions/campaign-actions";
-// import {
-//   AlertDialog,
-//   AlertDialogTrigger,
-//   AlertDialogContent,
-//   AlertDialogHeader,
-//   AlertDialogTitle,
-//   AlertDialogDescription,
-//   AlertDialogFooter,
-//   AlertDialogCancel,
-//   AlertDialogAction,
-// } from "@/components/ui/alert-dialog";
-
-// interface AthleteCampaignCardProps {
-//   campaign: {
-//     id: string;
-//     title: string;
-//     description: string;
-//     goalAmount: string;
-//     collectedAmount: string;
-//     status: string;
-//     athleteImage?: string | null;
-//     campaignImage?: string | null; // ✅ novo campo
-//   };
-//   onDeleted?: () => void;
-// }
-
-// export function AthleteCampaignCard({
-//   campaign,
-//   onDeleted,
-// }: AthleteCampaignCardProps) {
-//   const router = useRouter();
-//   const { data } = useSession();
-//   const user = data?.user;
-//   const [isDeleting, setIsDeleting] = useState(false);
-
-//   const progress =
-//     (Number(campaign.collectedAmount) / Number(campaign.goalAmount)) * 100 || 0;
-
-//   // ✅ Prioridade de exibição da imagem:
-//   // 1. campaignImage
-//   // 2. athleteImage (foto do atleta)
-//   const coverImage = campaign.campaignImage || campaign.athleteImage || null;
-
-//   const handleDelete = async () => {
-//     if (!user?.id) {
-//       toast.error("Usuário não encontrado. Faça login novamente.");
-//       return;
-//     }
-
-//     setIsDeleting(true);
-//     const res = await deleteCampaign(campaign.id, user.id);
-//     setIsDeleting(false);
-
-//     if (res.success) {
-//       toast.success("Campanha excluída com sucesso!");
-//       onDeleted?.();
-//     } else {
-//       toast.error(res.error || "Erro ao excluir campanha.");
-//     }
-//   };
-
-//   return (
-//     <Card className="h-full overflow-hidden border border-gray-200 shadow-sm transition hover:shadow-md">
-//       {/* ✅ IMAGEM (com prioridade da campaignImage) */}
-//       <div className="relative aspect-[16/9] w-full bg-gray-100">
-//         {coverImage ? (
-//           <Image
-//             src={coverImage}
-//             alt="Imagem da campanha ou atleta"
-//             fill
-//             className="object-cover"
-//             sizes="(max-width: 768px) 100vw, 33vw"
-//             priority
-//           />
-//         ) : (
-//           <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-//             Sem imagem
-//           </div>
-//         )}
-//       </div>
-
-//       <CardHeader>
-//         <CardTitle className="text-xl font-semibold text-gray-800">
-//           {campaign.title}
-//         </CardTitle>
-//       </CardHeader>
-
-//       <CardContent className="space-y-4">
-//         {/* Descrição */}
-//         <p className="text-sm text-gray-600">{campaign.description}</p>
-
-//         {/* Meta & arrecadação */}
-//         <div className="flex items-center justify-between text-sm">
-//           <div>
-//             🎯 Meta:{" "}
-//             <strong>
-//               R$
-//               {Number(campaign.goalAmount).toLocaleString("pt-BR")}
-//             </strong>
-//           </div>
-//           <div>
-//             ❤️ Arrecadado:{" "}
-//             <strong>
-//               R$
-//               {Number(campaign.collectedAmount).toLocaleString("pt-BR")}
-//             </strong>
-//           </div>
-//         </div>
-
-//         {/* Barra de progresso */}
-//         <div className="mt-2 h-3 w-full overflow-hidden rounded-full bg-gray-200">
-//           <div
-//             className="bg-primary h-3 transition-all duration-700"
-//             style={{ width: `${Math.min(progress, 100)}%` }}
-//           />
-//         </div>
-
-//         {/* Botões de editar e excluir */}
-//         <div className="flex gap-3 pt-4">
-//           <AlertDialog>
-//             <AlertDialogTrigger asChild>
-//               <Button
-//                 className="bg-primary hover:bg-primary/90 flex w-1/2 items-center gap-2 text-white"
-//                 disabled={isDeleting}
-//               >
-//                 {isDeleting ? "Excluindo..." : "Excluir"}
-//               </Button>
-//             </AlertDialogTrigger>
-//             <AlertDialogContent>
-//               <AlertDialogHeader>
-//                 <AlertDialogTitle>Excluir campanha?</AlertDialogTitle>
-//                 <AlertDialogDescription>
-//                   Essa ação não pode ser desfeita. Isso excluirá permanentemente
-//                   sua campanha.
-//                 </AlertDialogDescription>
-//               </AlertDialogHeader>
-//               <AlertDialogFooter>
-//                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
-//                 <AlertDialogAction
-//                   className="bg-primary hover:bg-primary/90 text-white"
-//                   onClick={handleDelete}
-//                 >
-//                   Confirmar
-//                 </AlertDialogAction>
-//               </AlertDialogFooter>
-//             </AlertDialogContent>
-//           </AlertDialog>
-
-//           <Button
-//             variant="outline"
-//             className="w-1/2"
-//             onClick={() => router.push(`/create-campaigns?edit=${campaign.id}`)}
-//           >
-//             Editar
-//           </Button>
-//         </div>
-//       </CardContent>
-//     </Card>
-//   );
-// }
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -228,8 +57,12 @@ export function AthleteCampaignCard({
     setIsClient(true);
   }, []);
 
-  const progress =
-    (Number(campaign.collectedAmount) / Number(campaign.goalAmount)) * 100 || 0;
+  const progress = (() => {
+    const goal = Number(campaign.goalAmount);
+    const collected = Number(campaign.collectedAmount);
+    if (!goal || isNaN(goal)) return 0;
+    return Math.min((collected / goal) * 100, 100);
+  })();
 
   // 🎯 Se existir imagem de campanha, usa ela — senão, foto do atleta
   const coverImage = campaign.campaignImage || campaign.athleteImage || null;
@@ -338,7 +171,7 @@ export function AthleteCampaignCard({
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
-                  className="flex-1 bg-red-600 text-white hover:bg-red-700"
+                  className="bg-primary hover:bg-primary/90 flex-1 text-white"
                   disabled={isDeleting}
                 >
                   {isDeleting ? "Excluindo..." : "Excluir"}
@@ -354,7 +187,7 @@ export function AthleteCampaignCard({
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancelar</AlertDialogCancel>
                   <AlertDialogAction
-                    className="bg-red-600 text-white hover:bg-red-700"
+                    className="bg-primary hover:bg-primary/90 text-white"
                     onClick={handleDelete}
                   >
                     Confirmar

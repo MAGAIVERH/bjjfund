@@ -170,6 +170,27 @@ export function AthleteChartCard({
                 stroke="#6b7280"
                 interval={0}
                 tickMargin={8}
+                tickFormatter={(value) => {
+                  // 📱 Aplicar apenas no mobile (largura <= 768px)
+                  if (
+                    typeof window !== "undefined" &&
+                    window.innerWidth < 768
+                  ) {
+                    if (filter === "semana") {
+                      return value.replace("Semana ", "Sem "); // Ex: "Sem 1"
+                    }
+                    if (filter === "mes") {
+                      return value.slice(0, 3); // Ex: "Jan", "Fev", "Mar"
+                    }
+                  }
+                  return value; // 💻 No desktop não modifica nada
+                }}
+                tick={{
+                  fontSize:
+                    typeof window !== "undefined" && window.innerWidth < 768
+                      ? 11
+                      : 12,
+                }}
               />
               <YAxis
                 stroke="#6b7280"
