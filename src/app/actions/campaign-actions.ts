@@ -12,12 +12,11 @@ export async function getAllCampaigns() {
   try {
     const rows = await db
       .select({
-        // campanha
         id: campaigns.id,
         title: campaigns.title,
         description: campaigns.description,
         goalAmount: campaigns.goalAmount,
-        collectedAmount: campaigns.collectedAmount,
+        // ignoramos o collectedAmount salvo no banco
         status: campaigns.status,
         startDate: campaigns.startDate,
         endDate: campaigns.endDate,
@@ -28,42 +27,56 @@ export async function getAllCampaigns() {
         athleteName: user.name,
         faixa: athletes.faixa,
         escola: athletes.escola,
-        athleteAvatarManual: athletes.image, // rosto enviado manualmente
-        athleteAvatarGoogle: user.image, // foto do Google
+        athleteAvatarManual: athletes.image,
+        athleteAvatarGoogle: user.image,
       })
       .from(campaigns)
       .leftJoin(athletes, eq(campaigns.athleteId, athletes.id))
       .leftJoin(user, eq(athletes.userId, user.id));
 
-    const data = rows.map((r) => {
-      const athleteImage =
-        (r.athleteAvatarManual && r.athleteAvatarManual.trim() !== ""
-          ? r.athleteAvatarManual
-          : r.athleteAvatarGoogle && r.athleteAvatarGoogle.trim() !== ""
-            ? r.athleteAvatarGoogle
-            : null) ?? null;
+    // ✅ Para cada campanha, somar DOAÇÕES reais
+    const data = await Promise.all(
+      rows.map(async (r) => {
+        // Buscar total de doações da campanha
+        const [donationStats] = await db
+          .select({
+            totalAmount: sql<number>`SUM(CAST(${donations.amount} AS DECIMAL))`,
+            supportersCount: sql<number>`COUNT(DISTINCT ${donations.donorUserId})`,
+          })
+          .from(donations)
+          .where(eq(donations.athleteId, r.athleteId || ""));
 
-      return {
-        id: r.id,
-        title: r.title ?? "",
-        description: r.description ?? "",
-        goalAmount: Number(r.goalAmount ?? 0),
-        collectedAmount: Number(r.collectedAmount ?? 0),
-        status: r.status ?? "active",
-        startDate: r.startDate ?? null,
-        endDate: r.endDate ?? null,
+        // Avatar do atleta
+        const athleteImage =
+          (r.athleteAvatarManual && r.athleteAvatarManual.trim() !== ""
+            ? r.athleteAvatarManual
+            : r.athleteAvatarGoogle && r.athleteAvatarGoogle.trim() !== ""
+              ? r.athleteAvatarGoogle
+              : null) ?? null;
 
-        // imagens
-        campaignImage: r.campaignImage ?? null,
-        athleteImage, // ✅ mantém o nome que seu card usa
+        return {
+          id: r.id,
+          title: r.title ?? "",
+          description: r.description ?? "",
+          goalAmount: Number(r.goalAmount ?? 0),
+          collectedAmount: Number(donationStats?.totalAmount ?? 0), // ✅ valor correto
+          supportersCount: Number(donationStats?.supportersCount ?? 0), // ✅ pode ser útil
+          status: r.status ?? "active",
+          startDate: r.startDate ?? null,
+          endDate: r.endDate ?? null,
 
-        // atleta
-        athleteId: r.athleteId ?? "",
-        athleteName: r.athleteName ?? "Atleta",
-        faixa: r.faixa ?? "",
-        escola: r.escola ?? "",
-      };
-    });
+          // Imagens
+          campaignImage: r.campaignImage ?? null,
+          athleteImage,
+
+          // Dados atleta
+          athleteId: r.athleteId ?? "",
+          athleteName: r.athleteName ?? "Atleta",
+          faixa: r.faixa ?? "",
+          escola: r.escola ?? "",
+        };
+      }),
+    );
 
     return { success: true, data };
   } catch (error) {
