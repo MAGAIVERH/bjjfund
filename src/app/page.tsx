@@ -94,8 +94,6 @@ export default function HomePage() {
           <AllWinSection />
         </section>
       </main>
-
-      {/* Footer */}
       <Footer />
     </>
   );
