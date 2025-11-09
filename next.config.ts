@@ -51,6 +51,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "scontent.xx.fbcdn.net",
       },
+      {
+        protocol: "https",
+        hostname: "qbjjc.com.au",
+      },
     ],
   },
 };
