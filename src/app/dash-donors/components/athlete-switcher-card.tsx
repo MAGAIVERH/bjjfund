@@ -14,18 +14,11 @@ type Mode = "profile" | "photo" | "history" | "donate";
 export interface AthleteData {
   athleteId: string;
   name: string;
-
-  // ========= Campos de imagem =========
-  // Já existia:
   avatar?: string | null;
   fullImage?: string | null;
-
-  // Novos (opcionais), para suportar todos os casos (Google / Manual):
   image?: string | null; // foto de rosto salva no schema "athletes.image"
   userImage?: string | null; // foto do Google (schema "user.image")
   photo?: string | null; // alguns fluxos podem usar "photo" no front
-
-  // ========= Demais campos =========
   faixa?: string | null;
   escola?: string | null;
   nascimento?: string | null;
@@ -36,6 +29,8 @@ export interface AthleteData {
   prata?: number | null;
   bronze?: number | null;
   historia?: string | null;
+  totalAmount?: number | null; // 💰 total arrecadado
+  totalSupporters?: number | null; // 👥 número de apoiadores
 }
 
 interface AthleteSwitcherCardProps {
@@ -115,6 +110,8 @@ export default function AthleteSwitcherCard({
             ouro={athlete.ouro ?? 0}
             prata={athlete.prata ?? 0}
             bronze={athlete.bronze ?? 0}
+            totalAmount={athlete.totalAmount ?? 0} // ✅ AQUI
+            totalSupporters={athlete.totalSupporters ?? 0} // ✅ AQUI
             className="h-full"
             showDonateCta={showDonateButton}
             onDonate={() => setMode("donate")}
