@@ -14,7 +14,7 @@ export function HeroSection() {
           style={{ animationDelay: "1s" }}
         ></div>
         <div
-          className="bg-primary animate-float absolute bottom-32 left-1/4 h-20 w-20 rounded-full"
+          className="bg-primary animate-float /* posição melhor no mobile */ /* comportamento original no desktop */ absolute bottom-40 left-4 h-20 w-20 rounded-full md:bottom-32 md:left-1/4"
           style={{ animationDelay: "2s" }}
         ></div>
       </div>
@@ -22,10 +22,13 @@ export function HeroSection() {
       <div className="relative z-10 container mx-auto px-6 text-center">
         <div className="mx-auto max-w-4xl space-y-8">
           {/* Badge */}
-          <div className="animate-fade-in-up">
-            <Badge variant="outline" className="px-4 py-2 text-sm font-medium">
-              <Trophy className="mr-2 h-4 w-4" />
-              Plataforma de Crowdfunding para Atletas de Jiu-Jitsu
+          <div className="animate-fade-in-up pt-8 md:pt-0">
+            <Badge
+              variant="outline"
+              className="max-w-full px-4 py-2 text-center text-sm font-medium whitespace-normal"
+            >
+              <Trophy className="mr-2 h-4 w-4 shrink-0" />
+              Plataforma de Doações para Atletas de Jiu-Jitsu
             </Badge>
           </div>
 

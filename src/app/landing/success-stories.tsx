@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Trophy } from "lucide-react";
 import AthleteProfileCard from "@/app/dash-athletes/components/athlete-profile-card";
 import { getAllAthletes } from "../actions/athlete-actions";
 
@@ -66,7 +66,11 @@ export function SuccessStories() {
       <div className="container mx-auto px-6">
         {/* Cabeçalho */}
         <div className="mb-16 text-center">
-          <Badge variant="outline" className="mb-4">
+          <Badge
+            variant="outline"
+            className="mb-4 px-4 py-2 text-sm font-medium"
+          >
+            <Trophy className="mr-2 h-4 w-4" />
             Histórias de Sucesso
           </Badge>
           <h2 className="mb-6 text-3xl font-bold text-balance md:text-5xl">
@@ -86,7 +90,7 @@ export function SuccessStories() {
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-1/2 -left-12 z-10 hidden -translate-y-1/2 rounded-full bg-white/80 shadow backdrop-blur hover:bg-white lg:flex"
+            className="bg-primary absolute top-1/2 -left-12 z-10 hidden -translate-y-1/2 rounded-full text-white shadow backdrop-blur transition-all duration-300 hover:bg-black hover:text-white lg:flex"
             onClick={() => scrollManual("left")}
           >
             <ChevronLeft className="h-6 w-6" />
@@ -149,7 +153,7 @@ export function SuccessStories() {
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-1/2 -right-12 z-10 hidden -translate-y-1/2 rounded-full bg-white/80 shadow backdrop-blur hover:bg-white lg:flex"
+            className="bg-primary absolute top-1/2 -right-12 z-10 hidden -translate-y-1/2 rounded-full text-white shadow backdrop-blur transition-all duration-300 hover:bg-black hover:text-white lg:flex"
             onClick={() => scrollManual("right")}
           >
             <ChevronRight className="h-6 w-6" />

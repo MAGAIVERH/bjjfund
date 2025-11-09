@@ -18,7 +18,7 @@ export function AllWinSection() {
           style={{ animationDelay: "1s" }}
         ></div>
         <div
-          className="bg-primary animate-float absolute bottom-20 left-1/3 h-20 w-20 rounded-full"
+          className="bg-primary animate-float /* posição melhor no mobile */ /* comportamento original no desktop */ absolute bottom-30 left-4 h-20 w-20 rounded-full md:bottom-32 md:left-1/4"
           style={{ animationDelay: "2s" }}
         ></div>
       </div>
@@ -75,15 +75,31 @@ export function AllWinSection() {
 
         {/* Por que apoiar agora */}
         <div className="mb-12 space-y-6">
-          <h3 className="text-2xl font-bold">Por que apoiar agora?</h3>
+          <h3 className="text-center text-2xl font-bold">
+            Por que apoiar agora?
+          </h3>
+
           <ul className="text-muted-foreground mx-auto flex max-w-xl flex-col gap-4 text-lg">
-            <li>
-              ✅ Porque cada contribuição transforma treinos em conquistas.
+            <li className="flex items-start gap-2">
+              <span className="text-green-500">✅</span>
+              <span>
+                Porque cada contribuição transforma treinos em conquistas.
+              </span>
             </li>
-            <li>✅ Porque o esporte muda vidas e inspira novas gerações.</li>
-            <li>
-              ✅ Porque mesmo sem incentivo fiscal, o maior retorno é saber que
-              você fez parte dessa vitória.
+
+            <li className="flex items-start gap-2">
+              <span className="text-green-500">✅</span>
+              <span>
+                {" "}
+                Porque o esporte muda vidas e inspira novas gerações.
+              </span>
+            </li>
+
+            <li className="flex items-start gap-2">
+              <span className="text-green-500">✅</span>
+              <span>
+                O maior retorno é saber que você fez parte dessa vitória.
+              </span>
             </li>
           </ul>
         </div>
