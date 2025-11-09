@@ -3,7 +3,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
-import { getAthleteByUserId } from "../actions/athlete-actions";
+import {
+  deleteAthleteAccount,
+  getAthleteByUserId,
+} from "../actions/athlete-actions";
 import { getCampaignByUserId } from "../actions/campaign-actions";
 
 import { AthleteChartCard } from "./components/athlete-chart-card";
@@ -17,8 +20,20 @@ import {
   BarChart3,
   ChevronLeft,
   ChevronRight,
+  Trash,
 } from "lucide-react";
 import AthleteProfileCard from "./components/athlete-profile-card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function AthleteDashboard() {
   const { data, isPending } = useSession();
@@ -31,6 +46,7 @@ export default function AthleteDashboard() {
   const [editing, setEditing] = useState(false);
   const [showCampaign, setShowCampaign] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0); // 0 = Card, 1 = Grafico
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   // 🔹 Carrega dados do atleta e da campanha
   useEffect(() => {
@@ -70,6 +86,17 @@ export default function AthleteDashboard() {
       </div>
     );
   }
+
+  const handleDeleteAccount = async () => {
+    if (!user?.id) return;
+    const res = await deleteAthleteAccount(user.id);
+    if (res.success) {
+      // Finaliza sessão e redireciona
+      router.push("/");
+    } else {
+      alert("Erro ao excluir conta.");
+    }
+  };
 
   // ✅ CAMPANHA
   if (showCampaign) {
@@ -185,6 +212,39 @@ export default function AthleteDashboard() {
 
         {/* Botões no desktop (lado direito) */}
         <div className="hidden gap-3 lg:flex">
+          <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                className="hover:bg-black hover:text-white"
+              >
+                Excluir Conta
+              </Button>
+            </AlertDialogTrigger>
+
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Essa ação não pode ser desfeita. Isso irá excluir sua conta,
+                  campanha e todas as doações associadas.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter>
+                <AlertDialogCancel className="hover:bg-gray-200">
+                  Cancelar
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-primary hover:bg-primary/90 text-white"
+                  onClick={handleDeleteAccount}
+                >
+                  Confirmar Exclusão
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
           <Button variant="ghost" onClick={() => setEditing(true)}>
             <Edit className="h-4 w-4" /> Editar
           </Button>
@@ -303,12 +363,20 @@ export default function AthleteDashboard() {
       )}
 
       {/* Botão Sair no final (somente mobile) */}
-      <div className="mt-10 flex justify-center lg:hidden">
+      <div className="mt-10 flex justify-center gap-2 lg:hidden">
         <Button
           onClick={() => router.push("/")}
           className="bg-primary hover:bg-primary/90 flex w-40 items-center gap-2 text-white"
         >
           <LogOut className="mr-2 h-4 w-4" /> Sair
+        </Button>
+
+        <Button
+          variant="outline"
+          className="hover:bg-black hover:text-white"
+          onClick={() => setConfirmDelete(true)}
+        >
+          <Trash className="mr-2 h-4 w-4" /> Excluir Conta
         </Button>
       </div>
     </div>

@@ -167,15 +167,39 @@ export async function updateAthlete(
 }
 
 /**
- * Deleta um atleta pelo userId
+ * Exclui completamente o atleta, a campanha, as doações e o próprio usuário.
  */
-export async function deleteAthlete(userId: string) {
+export async function deleteAthleteAccount(userId: string) {
   try {
-    await db.delete(athletes).where(eq(athletes.userId, userId));
+    // 1. Verifica se existe atleta com esse userId
+    const [ath] = await db
+      .select({ athleteId: athletes.id })
+      .from(athletes)
+      .where(eq(athletes.userId, userId))
+      .limit(1);
+
+    // Se não existe atleta, ainda assim apagamos o usuário
+    if (!ath) {
+      await db.delete(user).where(eq(user.id, userId));
+      return { success: true };
+    }
+
+    // 2. Apaga doações vinculadas a esse atleta
+    await db.delete(donations).where(eq(donations.athleteId, ath.athleteId));
+
+    // 3. Apaga campanhas do atleta
+    await db.delete(campaigns).where(eq(campaigns.athleteId, ath.athleteId));
+
+    // 4. Apaga o atleta
+    await db.delete(athletes).where(eq(athletes.id, ath.athleteId));
+
+    // 5. Apaga o próprio usuário (BetterAuth)
+    await db.delete(user).where(eq(user.id, userId));
+
     return { success: true };
   } catch (error) {
-    console.error("[deleteAthlete] Erro ao deletar atleta:", error);
-    return { success: false, error: "Erro ao deletar atleta." };
+    console.error("[deleteAthleteAccount] Erro ao excluir conta:", error);
+    return { success: false, error: "Erro ao excluir conta." };
   }
 }
 
