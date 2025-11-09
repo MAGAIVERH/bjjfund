@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Footer } from "./landing/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,10 +26,10 @@ export default function RootLayout({
 }) {
   return (
     // ✅ ESSA LINHA É CRUCIAL PARA EVITAR O ERRO
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="pt-BR" className="h-full" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col scroll-smooth antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground flex min-h-screen flex-col scroll-smooth antialiased`}
       >
         {/* Conteúdo principal */}
         <main className="flex-grow">{children}</main>
