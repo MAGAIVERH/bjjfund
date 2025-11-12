@@ -158,8 +158,22 @@
 
 html,
 body {
+  overflow: visible !important;
   height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden; /* evita rolagem lateral indesejada */
+}
+
+/* remove qualquer isolamento que bloqueie o portal */
+#root,
+#__next {
+  isolation: unset !important;
+  position: static !important;
+  z-index: auto !important;
+}
+
+/* --- Corrige sobreposição do AlertDialog / Portal --- */
+[data-radix-portal] {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99999 !important;
+  display: contents; /* evita empilhar blocos extras */
 }
