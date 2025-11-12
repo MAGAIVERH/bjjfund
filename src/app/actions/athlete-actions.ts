@@ -51,7 +51,8 @@ export async function createAthlete(data: {
 }
 
 /**
- * ✅ Obtém informações completas do atleta pelo userId (com nome e imagem do Google)
+ * ✅ Obtém informações completas do atleta pelo userId
+ * Inclui soma de todas as doações diretas (independente de campanha)
  */
 export async function getAthleteByUserId(userId: string) {
   try {
@@ -63,7 +64,7 @@ export async function getAthleteByUserId(userId: string) {
         userImage: user.image, // imagem do Google
         athleteImage: athletes.image, // rosto
         fullImage: athletes.fullImage, // corpo inteiro
-        historia: athletes.historia, // ✅ agora incluída
+        historia: athletes.historia,
         faixa: athletes.faixa,
         escola: athletes.escola,
         nascimento: athletes.nascimento,
@@ -73,19 +74,42 @@ export async function getAthleteByUserId(userId: string) {
         ouro: athletes.ouro,
         prata: athletes.prata,
         bronze: athletes.bronze,
+
+        // 🔹 Novos campos agregados de doações
+        totalAmount: sql<number>`COALESCE(SUM(CAST(${donations.amount} AS DECIMAL)), 0)`,
+        totalSupporters: sql<number>`COUNT(DISTINCT ${donations.donorUserId})`,
       })
       .from(athletes)
       .leftJoin(user, eq(athletes.userId, user.id))
+      .leftJoin(donations, eq(donations.athleteId, athletes.id))
       .where(eq(athletes.userId, userId))
+      .groupBy(
+        athletes.id,
+        athletes.userId,
+        user.name,
+        user.image,
+        athletes.image,
+        athletes.fullImage,
+        athletes.faixa,
+        athletes.escola,
+        athletes.nascimento,
+        athletes.cidade,
+        athletes.bio,
+        athletes.historia,
+        athletes.evento,
+        athletes.ouro,
+        athletes.prata,
+        athletes.bronze,
+      )
       .limit(1);
 
-    if (!result || result.length === 0) {
+    if (!result.length) {
       return { success: false, error: "Atleta não encontrado." };
     }
 
     const r = result[0];
 
-    /** 🧠 CORREÇÃO — Prioridade correta do avatar */
+    /** 🧠 Avatar com prioridade correta */
     const avatar =
       r.athleteImage && r.athleteImage.trim() !== ""
         ? r.athleteImage
@@ -104,13 +128,17 @@ export async function getAthleteByUserId(userId: string) {
       bio: r.bio,
       historia: r.historia,
       evento: r.evento,
-      ouro: r.ouro ?? "0",
-      prata: r.prata ?? "0",
-      bronze: r.bronze ?? "0",
-      avatar, // ✅ avatar separado da fullImage
+      ouro: Number(r.ouro ?? 0),
+      prata: Number(r.prata ?? 0),
+      bronze: Number(r.bronze ?? 0),
+      avatar,
       image: r.athleteImage,
       fullImage: r.fullImage,
       userImage: r.userImage,
+
+      // ✅ Valores reais de doações
+      totalAmount: Number(r.totalAmount ?? 0),
+      totalSupporters: Number(r.totalSupporters ?? 0),
     };
 
     return { success: true, athlete };
