@@ -276,7 +276,7 @@ const RegisterForm = () => {
               {isGoogleLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Criando conta coom Google...
+                  Criando conta com Google...
                 </>
               ) : (
                 <>
@@ -298,7 +298,7 @@ const RegisterForm = () => {
                       fill="#EA4335"
                     />
                   </svg>
-                  Entrar com Google
+                  Criar conta com Google
                 </>
               )}
             </Button>
