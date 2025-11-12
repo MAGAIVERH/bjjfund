@@ -218,7 +218,7 @@ export default function AthleteDashboard() {
                 variant="ghost"
                 className="hover:bg-black hover:text-white"
               >
-                Excluir Conta
+                <Trash className="mr-2 h-4 w-4" /> Excluir Conta
               </Button>
             </AlertDialogTrigger>
 
@@ -303,8 +303,14 @@ export default function AthleteDashboard() {
                 ouro={athleteData.ouro ?? 0}
                 prata={athleteData.prata ?? 0}
                 bronze={athleteData.bronze ?? 0}
-                totalAmount={campaignData?.collectedAmount}
-                totalSupporters={campaignData?.supportersCount}
+                totalAmount={
+                  campaignData?.collectedAmount ?? athleteData.totalAmount ?? 0
+                }
+                totalSupporters={
+                  campaignData?.supportersCount ??
+                  athleteData.totalSupporters ??
+                  0
+                }
               />
             </div>
 
@@ -334,8 +340,16 @@ export default function AthleteDashboard() {
                   ouro={athleteData.ouro ?? 0}
                   prata={athleteData.prata ?? 0}
                   bronze={athleteData.bronze ?? 0}
-                  totalAmount={campaignData?.collectedAmount}
-                  totalSupporters={campaignData?.supportersCount}
+                  totalAmount={
+                    campaignData?.collectedAmount ??
+                    athleteData.totalAmount ??
+                    0
+                  }
+                  totalSupporters={
+                    campaignData?.supportersCount ??
+                    athleteData.totalSupporters ??
+                    0
+                  }
                 />
               </div>
             ) : (
@@ -371,13 +385,36 @@ export default function AthleteDashboard() {
           <LogOut className="mr-2 h-4 w-4" /> Sair
         </Button>
 
-        <Button
-          variant="outline"
-          className="hover:bg-black hover:text-white"
-          onClick={() => setConfirmDelete(true)}
-        >
-          <Trash className="mr-2 h-4 w-4" /> Excluir Conta
-        </Button>
+        <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+          <AlertDialogTrigger asChild>
+            <Button variant="ghost" className="hover:bg-black hover:text-white">
+              <Trash className="mr-2 h-4 w-4" />
+              Excluir Conta
+            </Button>
+          </AlertDialogTrigger>
+
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Essa ação não pode ser desfeita. Isso irá excluir sua conta,
+                campanha e todas as doações associadas.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel className="hover:bg-gray-200">
+                Cancelar
+              </AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-primary hover:bg-primary/90 text-white"
+                onClick={handleDeleteAccount}
+              >
+                Confirmar Exclusão
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
