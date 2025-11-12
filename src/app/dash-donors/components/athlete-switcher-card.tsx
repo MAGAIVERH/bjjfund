@@ -86,11 +86,11 @@ export default function AthleteSwitcherCard({
 
   // ========= Fallback unificado de avatar =========
   const resolvedAvatar =
+    athlete.userImage ||
     athlete.avatar ||
     athlete.image ||
-    athlete.fullImage ||
-    athlete.userImage ||
     athlete.photo ||
+    athlete.fullImage ||
     null;
 
   return (
