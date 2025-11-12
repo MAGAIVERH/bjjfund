@@ -211,72 +211,76 @@ export default function AthleteDashboard() {
         </div>
 
         {/* Botões no desktop (lado direito) */}
-        <div className="hidden gap-3 lg:flex">
-          <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="ghost"
-                className="hover:bg-black hover:text-white"
-              >
-                <Trash className="mr-2 h-4 w-4" /> Excluir Conta
+        {athleteData && (
+          <>
+            <div className="hidden gap-3 lg:flex">
+              <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="hover:bg-black hover:text-white"
+                  >
+                    <Trash className="mr-2 h-4 w-4" /> Excluir Conta
+                  </Button>
+                </AlertDialogTrigger>
+
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Essa ação não pode ser desfeita. Isso irá excluir sua
+                      conta, campanha e todas as doações associadas.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="hover:bg-gray-200">
+                      Cancelar
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-primary hover:bg-primary/90 text-white"
+                      onClick={handleDeleteAccount}
+                    >
+                      Confirmar Exclusão
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+
+              <Button variant="ghost" onClick={() => setEditing(true)}>
+                <Edit className="h-4 w-4" /> Editar
               </Button>
-            </AlertDialogTrigger>
+              <Button variant="ghost" onClick={() => setShowCampaign(true)}>
+                <BarChart3 className="h-4 w-4" /> Ver campanha
+              </Button>
+              <Button
+                className="bg-primary text-white"
+                onClick={() => router.push("/")}
+              >
+                <LogOut className="h-4 w-4" /> Sair
+              </Button>
+            </div>
 
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Essa ação não pode ser desfeita. Isso irá excluir sua conta,
-                  campanha e todas as doações associadas.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
+            {/* Botões no mobile (embaixo do título) */}
+            <div className="mt-4 flex w-full flex-col items-center gap-3 lg:hidden">
+              <Button
+                variant="outline"
+                className="w-40"
+                onClick={() => setEditing(true)}
+              >
+                <Edit className="mr-2 h-4 w-4" /> Editar
+              </Button>
 
-              <AlertDialogFooter>
-                <AlertDialogCancel className="hover:bg-gray-200">
-                  Cancelar
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  className="bg-primary hover:bg-primary/90 text-white"
-                  onClick={handleDeleteAccount}
-                >
-                  Confirmar Exclusão
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-
-          <Button variant="ghost" onClick={() => setEditing(true)}>
-            <Edit className="h-4 w-4" /> Editar
-          </Button>
-          <Button variant="ghost" onClick={() => setShowCampaign(true)}>
-            <BarChart3 className="h-4 w-4" /> Ver campanha
-          </Button>
-          <Button
-            className="bg-primary text-white"
-            onClick={() => router.push("/")}
-          >
-            <LogOut className="h-4 w-4" /> Sair
-          </Button>
-        </div>
-
-        {/* Botões no mobile (embaixo do título) */}
-        <div className="mt-4 flex w-full flex-col items-center gap-3 lg:hidden">
-          <Button
-            variant="outline"
-            className="w-40"
-            onClick={() => setEditing(true)}
-          >
-            <Edit className="mr-2 h-4 w-4" /> Editar
-          </Button>
-
-          <Button
-            variant="outline"
-            className="w-40"
-            onClick={() => setShowCampaign(true)}
-          >
-            <BarChart3 className="mr-2 h-4 w-4" /> Ver campanha
-          </Button>
-        </div>
+              <Button
+                variant="outline"
+                className="w-40"
+                onClick={() => setShowCampaign(true)}
+              >
+                <BarChart3 className="mr-2 h-4 w-4" /> Ver campanha
+              </Button>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Conteúdo principal */}
@@ -377,45 +381,50 @@ export default function AthleteDashboard() {
       )}
 
       {/* Botão Sair no final (somente mobile) */}
-      <div className="mt-10 flex justify-center gap-2 lg:hidden">
-        <Button
-          onClick={() => router.push("/")}
-          className="bg-primary hover:bg-primary/90 flex w-40 items-center gap-2 text-white"
-        >
-          <LogOut className="mr-2 h-4 w-4" /> Sair
-        </Button>
+      {athleteData && (
+        <div className="mt-10 flex justify-center gap-2 lg:hidden">
+          <Button
+            onClick={() => router.push("/")}
+            className="bg-primary hover:bg-primary/90 flex w-40 items-center gap-2 text-white"
+          >
+            <LogOut className="mr-2 h-4 w-4" /> Sair
+          </Button>
 
-        <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-          <AlertDialogTrigger asChild>
-            <Button variant="ghost" className="hover:bg-black hover:text-white">
-              <Trash className="mr-2 h-4 w-4" />
-              Excluir Conta
-            </Button>
-          </AlertDialogTrigger>
-
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Essa ação não pode ser desfeita. Isso irá excluir sua conta,
-                campanha e todas as doações associadas.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-
-            <AlertDialogFooter>
-              <AlertDialogCancel className="hover:bg-gray-200">
-                Cancelar
-              </AlertDialogCancel>
-              <AlertDialogAction
-                className="bg-primary hover:bg-primary/90 text-white"
-                onClick={handleDeleteAccount}
+          <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                className="hover:bg-black hover:text-white"
               >
-                Confirmar Exclusão
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
+                <Trash className="mr-2 h-4 w-4" />
+                Excluir Conta
+              </Button>
+            </AlertDialogTrigger>
+
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Essa ação não pode ser desfeita. Isso irá excluir sua conta,
+                  campanha e todas as doações associadas.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter>
+                <AlertDialogCancel className="hover:bg-gray-200">
+                  Cancelar
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-primary hover:bg-primary/90 text-white"
+                  onClick={handleDeleteAccount}
+                >
+                  Confirmar Exclusão
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      )}
     </div>
   );
 }
