@@ -157,8 +157,8 @@ export function AthleteChartCard({
       <CardContent className="flex flex-1 flex-col justify-center p-4">
         <div className="relative min-h-[250px] w-full flex-1">
           {allZero && !loading && (
-            <div className="absolute inset-0 flex items-center justify-center text-sm text-gray-400">
-              Nenhuma doação registrada ainda
+            <div className="pointer-events-none absolute top-1/3 left-30 max-w-[9rem] text-left text-xs leading-snug text-gray-500 md:top-1/2 md:left-1/2 md:max-w-none md:-translate-x-1/2 md:-translate-y-1/2 md:text-center md:text-sm md:leading-normal">
+              Nenhuma doação registrada ainda 💸
             </div>
           )}
 
