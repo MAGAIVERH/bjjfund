@@ -1,4 +1,4 @@
-# 🥋 BJJ Fund — Plataforma de Crowdfunding para Atletas de Jiu-Jitsu  
+# 🥋 BJJ Fund — Plataforma de Crowdfunding para Atletas de Jiu-Jitsu
 
 A maior plataforma brasileira criada para conectar **atletas de jiu-jitsu** a **apoiadores reais**.  
 Aqui, sonhos se transformam em conquistas por meio de um sistema transparente de **doações**, **campanhas**, **dashboards inteligentes** e autenticação segura.
@@ -23,9 +23,11 @@ Aqui, sonhos se transformam em conquistas por meio de um sistema transparente de
 # 📸 Preview da Aplicação
 
 ## 🏠 Tela Inicial
+
 ![Tela Inicial](public/readme/tela-inicial.jpg)
 
 ## ✨ Seções da Landing Page
+
 ![Seção](public/readme/tela-inicial2.jpg)
 ![Seção](public/readme/tela-inicial3.jpg)
 ![Seção](public/readme/tela-inicial4.jpg)
@@ -35,10 +37,12 @@ Aqui, sonhos se transformam em conquistas por meio de um sistema transparente de
 ![Seção](public/readme/tela-inicial8.jpg)
 
 ## 🔐 Autenticação
+
 ![Criar Conta](public/readme/aba-criar-conta.jpg)
 ![Login](public/readme/aba-fazer-login.jpg)
 
 ## 🧑‍🦽 Dashboard do Atleta
+
 ![Dashboard Atleta](public/readme/dash-athletes.jpg)
 
 ---
@@ -48,8 +52,8 @@ Aqui, sonhos se transformam em conquistas por meio de um sistema transparente de
 O **BJJ Fund** nasceu com a missão de apoiar atletas do jiu-jitsu brasileiro que deixam de competir por falta de recursos.  
 A plataforma conecta:
 
-- **Apoiadores:** pessoas que desejam investir em sonhos reais.  
-- **Atletas:** competidores que precisam de ajuda com viagens, inscrições e estrutura.  
+- **Apoiadores:** pessoas que desejam investir em sonhos reais.
+- **Atletas:** competidores que precisam de ajuda com viagens, inscrições e estrutura.
 
 O resultado?  
 **Treinos viram conquistas.**  
@@ -94,30 +98,35 @@ bjj-fund/
 # 🧩 Tecnologias Utilizadas
 
 ## **Frontend**
-- Next.js 15  
-- React 19  
-- Tailwind CSS 4  
-- Shadcn/UI  
-- Framer Motion  
+
+- Next.js 15
+- React 19
+- Tailwind CSS 4
+- Shadcn/UI
+- Framer Motion
 
 ## **Backend**
-- Next.js Route Handlers  
-- Better Auth  
+
+- Next.js Route Handlers
+- Better Auth
 
 ## **Pagamentos**
-- Stripe Checkout  
-- Stripe Webhooks  
+
+- Stripe Checkout
+- Stripe Webhooks
 
 ## **Banco de Dados**
-- PostgreSQL  
-- Drizzle ORM  
-- Drizzle Kit  
+
+- PostgreSQL
+- Drizzle ORM
+- Drizzle Kit
 
 ## **Outros**
-- Lucide Icons  
-- React Hook Form  
-- Zod  
-- Sonner Toasts  
+
+- Lucide Icons
+- React Hook Form
+- Zod
+- Sonner Toasts
 
 ---
 
@@ -138,12 +147,13 @@ bjj-fund/
 ```
 
 ### Recursos implementados:
-- Login  
-- Cadastro  
-- Login com Google  
-- Callback Google com verificação de conta existente  
-- Diferenciação por **roles**  
-- Tipagem avançada com **ExtendedSession**  
+
+- Login
+- Cadastro
+- Login com Google
+- Callback Google com verificação de conta existente
+- Diferenciação por **roles**
+- Tipagem avançada com **ExtendedSession**
 
 ---
 
@@ -166,29 +176,32 @@ Métricas atualizadas no dashboard
 ```
 
 ### Implementações:
-- Pagamentos reais via Stripe  
-- Webhook seguro com `constructEvent`  
-- Prevenção de duplicidade  
-- Doações com ou sem campanha  
-- Persistência completa no banco  
+
+- Pagamentos reais via Stripe
+- Webhook seguro com `constructEvent`
+- Prevenção de duplicidade
+- Doações com ou sem campanha
+- Persistência completa no banco
 
 ---
 
 # 📊 Dashboards
 
 ## 🥋 Dashboard do Atleta
-- Arrecadação mensal  
-- Métricas gerais  
-- Conquistas (ouro, prata, bronze)  
-- Visualização da campanha  
-- Acesso ao modo de edição  
-- Lista de apoiadores  
+
+- Arrecadação mensal
+- Métricas gerais
+- Conquistas (ouro, prata, bronze)
+- Visualização da campanha
+- Acesso ao modo de edição
+- Lista de apoiadores
 
 ## ❤️ Dashboard do Apoiador
-- Lista de atletas apoiados  
-- Atalhos para apoiar novamente  
-- Recomendações personalizadas  
-- Acompanhamento de campanhas  
+
+- Lista de atletas apoiados
+- Atalhos para apoiar novamente
+- Recomendações personalizadas
+- Acompanhamento de campanhas
 
 ---
 
@@ -196,44 +209,50 @@ Métricas atualizadas no dashboard
 
 Modelos presentes:
 
-- **User**  
-- **Sessions / Accounts**  
-- **Profiles**  
-- **Athletes**  
-- **Competitions**  
-- **Campaigns**  
-- **Campaign Items**  
-- **Donations**  
-- **Transactions**  
-- **AthleteDonors**  
-- **Metrics**  
-- **AthleteMetrics**  
+- **User**
+- **Sessions / Accounts**
+- **Profiles**
+- **Athletes**
+- **Competitions**
+- **Campaigns**
+- **Campaign Items**
+- **Donations**
+- **Transactions**
+- **AthleteDonors**
+- **Metrics**
+- **AthleteMetrics**
 - **CampaignMetrics**
 
 ### Cada tabela possui:
-- Foreign Keys  
-- Cascade deletes  
-- Índices  
-- Valores default  
-- Uso de JSONB quando necessário  
+
+- Foreign Keys
+- Cascade deletes
+- Índices
+- Valores default
+- Uso de JSONB quando necessário
 
 ---
 
 # 📡 APIs Implementadas
 
 ### **/api/check-user-exists**
+
 Verifica se o usuário Google já possui conta.
 
 ### **/api/select-role**
+
 Atribui a role (athlete/supporter).
 
 ### **/api/metrics/donations**
+
 Retorna estatísticas globais.
 
 ### **/api/stripe/webhook**
+
 Recebe confirmações da Stripe e salva no DB.
 
-### **/api/auth/**  
+### **/api/auth/**
+
 Toda stack Better Auth implementada.
 
 ---
@@ -241,17 +260,20 @@ Toda stack Better Auth implementada.
 # ⚙️ Instalação e Execução
 
 ### **1) Clonar projeto**
+
 ```bash
 git clone https://github.com/seu-usuario/bjj-fund.git
 cd bjj-fund
 ```
 
 ### **2) Instalar dependências**
+
 ```bash
 npm install
 ```
 
 ### **3) Criar arquivo `.env.local`**
+
 ```
 DATABASE_URL="postgres://..."
 STRIPE_SECRET_KEY="..."
@@ -262,11 +284,13 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
 
 ### **4) Rodar migrações**
+
 ```bash
 npx drizzle-kit push
 ```
 
 ### **5) Rodar servidor**
+
 ```bash
 npm run dev
 ```
@@ -290,8 +314,8 @@ O **BJJ Fund** nasceu para mudar vidas.
 
 Acreditamos que:
 
-- o jiu-jitsu transforma pessoas  
-- atletas brasileiros têm nível mundial  
+- o jiu-jitsu transforma pessoas
+- atletas brasileiros têm nível mundial
 - falta apenas **a ponte entre o sonho e a oportunidade**
 
 Essa plataforma é essa ponte.
@@ -301,11 +325,11 @@ Essa plataforma é essa ponte.
 # 👤 Autor
 
 **Carlos "Magaiver" Magalhães**  
-Desenvolvedor Full Stack • Next.js • React • Tailwind • PostgreSQL • Stripe • Better Auth  
+Desenvolvedor Full Stack • Next.js • React • Tailwind • PostgreSQL • Stripe • Better Auth
 
-🔗 Portfólio: https://my-portifolio-three-navy.vercel.app/#s-home  
+🔗 Portfólio: https://my-portifolio-three-navy.vercel.app/
 🔗 LinkedIn: https://www.linkedin.com/in/magaiver-magalhaes-bb9572234  
-🐙 GitHub: https://www.github.com/MAGAIVERH  
+🐙 GitHub: https://www.github.com/MAGAIVERH
 
 ---
 
@@ -318,4 +342,3 @@ Pull Requests são bem-vindos!
 # 📜 Licença
 
 Este projeto está sob licença **MIT**.
-
