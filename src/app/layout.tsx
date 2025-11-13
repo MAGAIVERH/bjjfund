@@ -14,6 +14,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "BJJ Fund - Plataforma de Crowdfunding para Atletas de Jiu-Jitsu",
+  icons: {
+    icon: "/trophy.svg",
+  },
   description:
     "Conectamos atletas de jiu-jitsu com apoiadores que acreditam no potencial de cada guerreiro. Doe ou crie sua campanha!",
 };
