@@ -1,6 +1,7 @@
-import { db } from "@/db";
-import { campaigns, athletes } from "@/db/schema";
 import { eq } from "drizzle-orm";
+
+import { db } from "@/db";
+import { athletes,campaigns } from "@/db/schema";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);

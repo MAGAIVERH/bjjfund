@@ -1,7 +1,8 @@
 "use server";
-import { db } from "@/db";
-import { userRoles, roles, user } from "@/db/schema";
 import { eq } from "drizzle-orm";
+
+import { db } from "@/db";
+import { roles, user,userRoles } from "@/db/schema";
 
 export async function setRole(userId: string, role: "athlete" | "supporter") {
   console.log(" setRole called with:", { userId, role });

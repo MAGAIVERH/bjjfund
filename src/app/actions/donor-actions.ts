@@ -1,8 +1,9 @@
 "use server";
 
-import { db } from "@/db";
-import { user, donations, athleteDonors, session, account } from "@/db/schema";
 import { eq } from "drizzle-orm";
+
+import { db } from "@/db";
+import { account,athleteDonors, donations, session, user } from "@/db/schema";
 
 /**
  * 🔥 Deleta completamente a conta de um usuário doador

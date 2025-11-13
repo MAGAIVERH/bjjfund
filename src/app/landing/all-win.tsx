@@ -1,8 +1,9 @@
 "use client";
 
-import { Heart, HandHeart, Sprout, ArrowRight, Brain } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowRight, Brain,HandHeart, Heart, Sprout } from "lucide-react";
 import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
 
 export function AllWinSection() {
   return (

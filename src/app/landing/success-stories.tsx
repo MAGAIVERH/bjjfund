@@ -1,10 +1,12 @@
 "use client";
 
+import { ChevronLeft, ChevronRight, Trophy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+
+import AthleteProfileCard from "@/app/dash-athletes/components/athlete-profile-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Trophy } from "lucide-react";
-import AthleteProfileCard from "@/app/dash-athletes/components/athlete-profile-card";
+
 import { getAllAthletes } from "../actions/athlete-actions";
 
 export function SuccessStories() {

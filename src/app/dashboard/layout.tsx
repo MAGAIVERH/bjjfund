@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+
 import { RoleGuard } from "../components/role-guard";
 
 interface DashboardLayoutProps {

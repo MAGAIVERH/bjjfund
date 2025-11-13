@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import Link from "next/link";
 import { Loader2 } from "lucide-react"; // ← spinner
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
+import { setRole } from "@/app/actions/auth-roles";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -18,18 +20,16 @@ import {
 } from "@/components/ui/card";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { authClient } from "@/lib/auth-client";
-import { setRole } from "@/app/actions/auth-roles";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { authClient } from "@/lib/auth-client";
 
 const registerSchema = z.object({
   name: z.string().trim().min(1, "Nome completo é obrigatório"),

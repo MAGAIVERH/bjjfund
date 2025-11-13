@@ -1,8 +1,9 @@
 "use server";
 
-import { db } from "@/db";
-import { athletes, user, donations } from "@/db/schema"; // ⬅️ adicione 'donations'
 import { eq, sql } from "drizzle-orm"; // ⬅️ adicione 'sql'
+
+import { db } from "@/db";
+import { athletes, donations,user } from "@/db/schema"; // ⬅️ adicione 'donations'
 
 export async function getAllAthletes() {
   try {

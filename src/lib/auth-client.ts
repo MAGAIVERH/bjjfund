@@ -1,4 +1,5 @@
 import { createAuthClient } from "better-auth/react";
+
 import type { ExtendedSession } from "./auth-types";
 
 /**

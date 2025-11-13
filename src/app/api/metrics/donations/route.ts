@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
-import { db } from "@/db";
-import { donations, campaigns, athletes } from "@/db/schema";
 import { eq, or } from "drizzle-orm";
+import { NextResponse } from "next/server";
+
+import { db } from "@/db";
+import { athletes,campaigns, donations } from "@/db/schema";
 
 export async function GET(req: Request) {
   try {

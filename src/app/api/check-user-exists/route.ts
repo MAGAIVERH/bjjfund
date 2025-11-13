@@ -1,6 +1,7 @@
+import { and, eq, isNotNull } from "drizzle-orm";
+
 import { db } from "@/db";
 import { user } from "@/db/schema";
-import { eq, and, isNotNull } from "drizzle-orm";
 
 export async function GET(req: Request) {
   try {

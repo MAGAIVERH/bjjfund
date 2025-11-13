@@ -1,8 +1,9 @@
-import { db } from "@/db";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+
+import { db } from "@/db";
 import * as schema from "@/db/schema";
-import type { ExtendedUser, ExtendedSession } from "@/lib/auth-types";
+import type { ExtendedSession,ExtendedUser } from "@/lib/auth-types";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {

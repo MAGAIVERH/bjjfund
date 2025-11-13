@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ChevronLeft, ChevronRight, Heart, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import AthleteProfileCard from "@/app/dash-athletes/components/athlete-profile-card";
+import { useState } from "react";
+
 import { createCheckoutSession } from "@/app/actions/create-checkout-session";
+import AthleteProfileCard from "@/app/dash-athletes/components/athlete-profile-card";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 type Mode = "profile" | "photo" | "history" | "donate";
 

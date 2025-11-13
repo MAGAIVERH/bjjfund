@@ -2,12 +2,13 @@
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+import { randomUUID } from "crypto";
+import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+
 import { db } from "@/db";
 import { donations } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { randomUUID } from "crypto";
 
 // ✅ Stripe sem API version forçada (usa a do seu projeto)
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);

@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Trophy, MapPin, Cake, Quote } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import clsx from "clsx";
+import { Cake, MapPin, Quote,Trophy } from "lucide-react";
+import { useEffect, useState } from "react";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface AthleteProfileCardProps {
   name: string;

@@ -1,3 +1,5 @@
+import { BarChart3,Heart, Shield, Target, Trophy, Users } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -6,8 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-import { Shield, Heart, Trophy, Target, Users, BarChart3 } from "lucide-react";
 
 const features = [
   {

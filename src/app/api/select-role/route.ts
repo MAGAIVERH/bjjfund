@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+
 import { setRole } from "@/app/actions/auth-roles";
 
 export async function POST(req: NextRequest) {

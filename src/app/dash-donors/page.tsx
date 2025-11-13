@@ -1,24 +1,26 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useSession } from "@/lib/auth-client";
-import { getAllAthletes } from "../actions/athlete-support-actions";
+import { ChevronLeft, ChevronRight, LogOut, Trash } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { LogOut, ChevronLeft, ChevronRight, Trash } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import AthleteSwitcherCard from "./components/athlete-switcher-card";
+import { useEffect, useRef, useState } from "react";
+
 import {
   AlertDialog,
-  AlertDialogTrigger,
+  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { useSession } from "@/lib/auth-client";
+
+import { getAllAthletes } from "../actions/athlete-support-actions";
 import { deleteDonorAccount } from "../actions/donor-actions";
+import AthleteSwitcherCard from "./components/athlete-switcher-card";
 
 export default function DonorDashboard() {
   const { data, isPending } = useSession();

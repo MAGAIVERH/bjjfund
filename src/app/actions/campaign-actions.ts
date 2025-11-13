@@ -1,9 +1,10 @@
 "use server";
 
-import { db } from "@/db";
-import { athletes, campaigns, user, donations } from "@/db/schema";
-import { eq, and, sql } from "drizzle-orm";
 import { randomUUID } from "crypto";
+import { and, eq, sql } from "drizzle-orm";
+
+import { db } from "@/db";
+import { athletes, campaigns, donations,user } from "@/db/schema";
 
 /**
  * Lista TODAS as campanhas com dados do atleta (nome, faixa, escola, avatar) e a imagem da campanha.

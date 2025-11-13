@@ -1,5 +1,5 @@
+import { Heart, Mail, MapPin, Phone,Trophy } from "lucide-react";
 import Link from "next/link";
-import { Trophy, Heart, Mail, MapPin, Phone } from "lucide-react";
 
 export function Footer() {
   return (

@@ -1,6 +1,7 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { FileText, Heart, Trophy,UserPlus } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
-import { UserPlus, FileText, Heart, Trophy } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const steps = [
   {

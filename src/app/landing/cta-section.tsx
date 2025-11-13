@@ -1,9 +1,10 @@
 "use client";
 
+import { ArrowRight, Heart, Trophy, Users } from "lucide-react";
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, Trophy, ArrowRight, Users } from "lucide-react";
-import Link from "next/link";
 
 export function CTASection() {
   return (

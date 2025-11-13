@@ -1,13 +1,14 @@
-import {
-  roles,
-  userRoles,
-  user as baUser,
-  account as baAccount,
-} from "@/db/schema";
 import bcrypt from "bcryptjs";
-import { v4 as uuidv4 } from "uuid";
 import { sql } from "drizzle-orm";
+import { v4 as uuidv4 } from "uuid";
+
 import { db } from "@/db";
+import {
+  account as baAccount,
+  roles,
+  user as baUser,
+  userRoles,
+} from "@/db/schema";
 
 async function seed() {
   // 1️⃣ cria role admin se não existir

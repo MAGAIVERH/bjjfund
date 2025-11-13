@@ -1,20 +1,22 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import LoginForm from "./components/login-form";
-import RegisterForm from "./components/register-form";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+
 import {
   AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogAction,
   AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useSearchParams } from "next/navigation";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+
+import LoginForm from "./components/login-form";
+import RegisterForm from "./components/register-form";
 
 export default function AuthenticationPage() {
   const searchParams = useSearchParams(); // 🔥 Hook para ler parâmetros da URL

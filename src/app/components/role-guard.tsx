@@ -1,8 +1,9 @@
 "use client";
 
+import { usePathname,useRouter } from "next/navigation";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+
 import { useSession } from "@/lib/auth-client";
 import type { ExtendedSession } from "@/lib/auth-types";
 

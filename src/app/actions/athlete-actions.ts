@@ -1,9 +1,10 @@
 "use server";
 
+import { randomUUID } from "crypto";
+import { eq, sql } from "drizzle-orm";
+
 import { db } from "@/db";
 import { athletes, campaigns, donations, user } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
-import { randomUUID } from "crypto";
 
 /**
  * Cria um novo atleta vinculado a um usuário

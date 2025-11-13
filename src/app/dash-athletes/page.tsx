@@ -1,28 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
 import {
-  deleteAthleteAccount,
-  getAthleteByUserId,
-} from "../actions/athlete-actions";
-import { getCampaignByUserId } from "../actions/campaign-actions";
-
-import { AthleteChartCard } from "./components/athlete-chart-card";
-import { AthleteForm, AthleteFormValues } from "./components/athlete-form";
-import { AthleteCampaignCard } from "./components/athlete-campaign-card";
-
-import { Button } from "@/components/ui/button";
-import {
-  Edit,
-  LogOut,
   BarChart3,
   ChevronLeft,
   ChevronRight,
+  Edit,
+  LogOut,
   Trash,
 } from "lucide-react";
-import AthleteProfileCard from "./components/athlete-profile-card";
+import { useRouter } from "next/navigation";
+import { useEffect,useState } from "react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,6 +22,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { useSession } from "@/lib/auth-client";
+
+import {
+  deleteAthleteAccount,
+  getAthleteByUserId,
+} from "../actions/athlete-actions";
+import { getCampaignByUserId } from "../actions/campaign-actions";
+import { AthleteCampaignCard } from "./components/athlete-campaign-card";
+import { AthleteChartCard } from "./components/athlete-chart-card";
+import { AthleteForm, AthleteFormValues } from "./components/athlete-form";
+import AthleteProfileCard from "./components/athlete-profile-card";
 
 export default function AthleteDashboard() {
   const { data, isPending } = useSession();

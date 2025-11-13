@@ -1,16 +1,16 @@
 import {
-  pgTable,
-  text,
-  serial,
-  varchar,
-  numeric,
   boolean,
-  timestamp,
   date,
-  jsonb,
-  integer,
-  primaryKey,
   index,
+  integer,
+  jsonb,
+  numeric,
+  pgTable,
+  primaryKey,
+  serial,
+  text,
+  timestamp,
+  varchar,
 } from "drizzle-orm/pg-core";
 
 /**

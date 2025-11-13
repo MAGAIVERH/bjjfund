@@ -1,6 +1,7 @@
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { roles } from "@/db/schema";
-import { eq } from "drizzle-orm";
 
 async function seedRoles() {
   const defaultRoles = ["admin", "athlete", "supporter"];

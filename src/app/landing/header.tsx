@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { Heart,Menu, Trophy } from "lucide-react";
+import { BookOpen, Flag, Info, Users } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Trophy, Menu, Heart } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { Info, BookOpen, Flag, Users } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navigation = [
   { name: "Como Funciona", href: "#como-funciona", icon: Info },
