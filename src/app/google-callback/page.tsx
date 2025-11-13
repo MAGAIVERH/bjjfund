@@ -111,6 +111,7 @@
 // }
 
 import { Suspense } from "react";
+
 import GoogleCallbackClient from "./components/GoogleCallbackClient";
 
 export default function Page() {
