@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -12,7 +12,7 @@ import {
   getAthleteByUserId,
   updateAthlete,
 } from "@/app/actions/athlete-actions";
-import { Avatar, AvatarFallback,AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -34,8 +34,8 @@ const athleteSchema = z.object({
   cidade: z.string().min(1, "Cidade é obrigatória"),
   bio: z
     .string()
-    .max(100, "A frase deve ter no máximo 80 caracteres.")
-    .min(50, "A frase deve ter no minimo 50 caracteres.")
+    .max(80, "A frase deve ter no máximo 80 caracteres.")
+    .min(70, "A frase deve ter no minimo 50 caracteres.")
     .optional(),
   photo: z.string().optional(), // avatar/rosto
   fullImage: z.string().optional(), // ✅ corpo inteiro
