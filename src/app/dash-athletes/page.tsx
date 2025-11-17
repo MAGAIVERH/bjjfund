@@ -9,7 +9,7 @@ import {
   Trash,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   AlertDialog,
@@ -133,8 +133,19 @@ export default function AthleteDashboard() {
             <p className="mb-4 text-gray-600">
               Você ainda não possui uma campanha ativa no momento.
             </p>
-            <Button onClick={() => router.push("/create-campaigns")}>
+            <Button
+              onClick={() => router.push("/create-campaigns")}
+              className="bg-primary hover:bg-primary/90 w-40 text-white"
+            >
               Criar Campanha
+            </Button>
+            {/* 🔹 BOTÃO VOLTAR AO PERFIL – SOMENTE MOBILE */}
+            <Button
+              variant="outline"
+              onClick={() => setShowCampaign(false)}
+              className="mt-4 w-40 lg:hidden"
+            >
+              ← Voltar ao perfil
             </Button>
           </div>
         ) : (
