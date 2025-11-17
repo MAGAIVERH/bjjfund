@@ -273,10 +273,9 @@ export default function AthleteDashboard() {
             </div>
 
             {/* Botões no mobile (embaixo do título) */}
-            <div className="mt-4 flex w-full flex-col items-center gap-3 lg:hidden">
+            <div className="mt-4 flex w-full items-center justify-center gap-3 lg:hidden">
               <Button
-                variant="outline"
-                className="w-40"
+                className="bg-primary hover:bg-primary/90 w-42 text-white"
                 onClick={() => setEditing(true)}
               >
                 <Edit className="mr-2 h-4 w-4" /> Editar
@@ -284,7 +283,7 @@ export default function AthleteDashboard() {
 
               <Button
                 variant="outline"
-                className="w-40"
+                className="w-42"
                 onClick={() => setShowCampaign(true)}
               >
                 <BarChart3 className="mr-2 h-4 w-4" /> Ver campanha
@@ -396,7 +395,7 @@ export default function AthleteDashboard() {
         <div className="mt-10 flex justify-center gap-2 lg:hidden">
           <Button
             onClick={() => router.push("/")}
-            className="bg-primary hover:bg-primary/90 flex w-40 items-center gap-2 text-white"
+            className="bg-primary hover:bg-primary/90 flex w-42 items-center gap-2 text-white"
           >
             <LogOut className="mr-2 h-4 w-4" /> Sair
           </Button>
@@ -405,10 +404,10 @@ export default function AthleteDashboard() {
             <AlertDialogTrigger asChild>
               <Button
                 variant="outline"
-                className="hover:bg-black hover:text-white"
+                className="w-42 hover:bg-black hover:text-white"
               >
                 <Trash className="mr-2 h-4 w-4" />
-                Excluir Conta
+                Excluir conta
               </Button>
             </AlertDialogTrigger>
 
