@@ -404,7 +404,7 @@ export default function AthleteDashboard() {
           <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
             <AlertDialogTrigger asChild>
               <Button
-                variant="ghost"
+                variant="outline"
                 className="hover:bg-black hover:text-white"
               >
                 <Trash className="mr-2 h-4 w-4" />
