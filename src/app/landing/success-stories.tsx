@@ -99,7 +99,11 @@ export function SuccessStories() {
           </Button>
 
           {/* Container dos Cards */}
-          <div ref={containerRef} className="w-full overflow-hidden">
+          <div
+            ref={containerRef}
+            className="w-full overflow-hidden"
+            onClick={() => setPaused((prev) => !prev)}
+          >
             <div
               className="marquee-track flex items-stretch justify-start gap-4"
               style={{
